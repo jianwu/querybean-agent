@@ -18,17 +18,11 @@ public class EnhanceContext {
 
 	private final boolean readOnly;
 
-	private final boolean enhanceSingleton;
-
 	private final boolean sysoutOnCollect;
-
-  private final boolean includeStaticMethods;
 
 	private PrintStream logout;
 
 	private int logLevel;
-
-	private final NameMapping nameMapping;
 
 	/**
 	 * Construct a context for enhancement.
@@ -37,7 +31,6 @@ public class EnhanceContext {
 
  		this.ignoreClassHelper = new IgnoreClassHelper(agentArgs);
  		this.agentArgsMap = ArgParser.parse(agentArgs);
- 		this.nameMapping = new NameMapping(classLoader);
  		this.logout = System.out;
 
 		String debugValue = agentArgsMap.get("debug");
@@ -51,34 +44,8 @@ public class EnhanceContext {
 			}
 		}
 
-    String nameFile = agentArgsMap.get("namefile");
-    if (nameFile != null) {
-      log(1, "loading metric name mapping file: ", nameFile);
-      nameMapping.loadFile(nameFile);
-    }
-
-    this.includeStaticMethods = getPropertyBoolean("includestaticmethods", false);
     this.readOnly = getPropertyBoolean("readonly", false);
 		this.sysoutOnCollect = getPropertyBoolean("sysoutoncollect", false);
-		this.enhanceSingleton = getPropertyBoolean("enhancesingleton", true);
-
-		if (logLevel > 0) {
-      log(8, "settings: debug["+debugValue+"] sysoutoncollect["+sysoutOnCollect+"] readonly["+readOnly+"]", "");
-  		log(1, "name mappings: ", nameMapping.toString());
-      log(1, "match patterns: ", nameMapping.getPatternMatch().toString());
-      log(1, "match keys: ", nameMapping.getMatches());
-		}
-	}
-
-	/**
-	 * Return a potentially cut down metric name.
-	 * <p>
-	 * For example, trim of extraneous package names or prefix controllers or
-	 * JAX-RS endpoints with "web" etc.
-	 * </p>
-	 */
-	public String getMappedName(String rawName) {
-		return nameMapping.getMappedName(rawName);
 	}
 
 	/**
@@ -102,9 +69,6 @@ public class EnhanceContext {
 	 * known libraries JDBC drivers etc can be skipped.
 	 */
 	public boolean isIgnoreClass(String className) {
-    if (nameMapping.hasMatchIncludes()) {
-      return !nameMapping.matchInclude(className);
-    }
 		return ignoreClassHelper.isIgnoreClass(className);
 	}
 
@@ -161,32 +125,10 @@ public class EnhanceContext {
 		return readOnly;
 	}
 
-	/**
-	 * Return true if classes annotated with Singleton should be enhanced.
-	 */
-	public boolean isEnhanceSingleton() {
-    return enhanceSingleton;
-  }
-
   /**
    * Return true to add some debug sysout via the enhancement.
    */
   public boolean isSysoutOnCollect() {
     return sysoutOnCollect;
-  }
-
-  /**
-   * Return a Match object for the metric. Can be used to assign
-   * buckets or explicitly exclude.
-   */
-  public NameMapping.Match findMatch(String metricFullName) {
-    return nameMapping.findMatch(metricFullName);
-  }
-
-  /**
-   * Return true if static methods should be included by default.
-   */
-  public boolean isIncludeStaticMethods() {
-    return includeStaticMethods;
   }
 }

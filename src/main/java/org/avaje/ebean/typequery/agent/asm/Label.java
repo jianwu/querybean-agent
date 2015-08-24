@@ -29,8 +29,8 @@
  */
 package org.avaje.ebean.typequery.agent.asm;
 
-import org.avaje.ebean.typequery.generator.asm.tree.MethodNode;
-import org.avaje.ebean.typequery.generator.asm.tree.MethodNode;
+//import org.avaje.ebean.typequery.generator.asm.tree.MethodNode;
+//import org.avaje.ebean.typequery.generator.asm.tree.MethodNode;
 
 /**
  * A label represents a position in the bytecode of a method. Labels are used
@@ -114,7 +114,6 @@ public class Label {
      * Field used to associate user information to a label. Warning: this field
      * is used by the ASM tree package. In order to use it with the ASM tree
      * package you must override the
-     * {@link MethodNode#getLabelNode} method.
      */
     public Object info;
 
