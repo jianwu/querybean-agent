@@ -36,18 +36,18 @@ public class QAddress extends TQRootBean<Address,QAddress> {
     this.country = new QAssocCountry<>("country", this, maxDepth);
   }
 
-  public PLong<QAddress> _version() {
-    if (version == null) {
-      version = new PLong<>("version", this);
-    }
-    return version;
-  }
-
-  public QAssocCountry<QAddress> _country() {
-    if (country == null) {
-      country = new QAssocCountry<>("country", this, 1);
-    }
-    return country;
-  }
+//  public PLong<QAddress> _version() {
+//    if (version == null) {
+//      version = new PLong<>("version", this);
+//    }
+//    return version;
+//  }
+//
+//  public QAssocCountry<QAddress> _country() {
+//    if (country == null) {
+//      country = new QAssocCountry<>("country", this, 1);
+//    }
+//    return country;
+//  }
 
 }

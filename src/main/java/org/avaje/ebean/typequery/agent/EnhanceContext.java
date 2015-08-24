@@ -27,7 +27,7 @@ public class EnhanceContext {
 	/**
 	 * Construct a context for enhancement.
 	 */
-	public EnhanceContext(String agentArgs, ClassLoader classLoader) {
+	public EnhanceContext(String agentArgs) {
 
  		this.ignoreClassHelper = new IgnoreClassHelper(agentArgs);
  		this.agentArgsMap = ArgParser.parse(agentArgs);
@@ -38,7 +38,7 @@ public class EnhanceContext {
 			try {
 				logLevel = Integer.parseInt(debugValue.trim());
 			} catch (NumberFormatException e) {
-				String msg = "Avaje metrics agent debug argument [" + debugValue+ "] is not an int? ignoring.";
+				String msg = "agent debug argument [" + debugValue+ "] is not an int? ignoring.";
         System.err.println(msg);
 				logger.log(Level.WARNING, msg);
 			}

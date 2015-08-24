@@ -1,7 +1,79 @@
 package org.avaje.ebean.typequery.agent;
 
+import org.avaje.ebean.typequery.agent.asm.ClassVisitor;
+import org.avaje.ebean.typequery.agent.asm.Label;
+import org.avaje.ebean.typequery.agent.asm.MethodVisitor;
+import org.avaje.ebean.typequery.agent.asm.Opcodes;
+
 /**
- * Created by rob on 24/08/15.
+ * Field information.
  */
-public class FieldInfo {
+public class FieldInfo implements Opcodes {
+
+  private final String className;
+  private final String name;
+  private final String desc;
+  private final String signature;
+
+  public FieldInfo(String className, String name, String desc, String signature) {
+    this.className = className;
+    this.name = name;
+    this.desc = desc;
+    this.signature = signature;
+  }
+
+  public String toString() {
+    return "cls:"+className+" name:" + name + " desc:" + desc + " sig:" + signature;
+  }
+
+  /**
+   * Add the 'property access method' that callers should use (instead of get field).
+   */
+  public void writeMethod(ClassVisitor cw) {
+
+    // simple why to determine the property is an associated bean type
+    boolean assocBean = desc.contains("/QAssoc");
+
+    MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "_"+name, "()"+desc, "()"+signature, null);
+    mv.visitCode();
+    Label l0 = new Label();
+    mv.visitLabel(l0);
+    mv.visitLineNumber(1, l0);
+    mv.visitVarInsn(ALOAD, 0);
+    mv.visitFieldInsn(GETFIELD, className, name, desc);
+    Label l1 = new Label();
+    mv.visitJumpInsn(IFNONNULL, l1);
+    Label l2 = new Label();
+    mv.visitLabel(l2);
+    mv.visitLineNumber(2, l2);
+    mv.visitVarInsn(ALOAD, 0);
+    mv.visitTypeInsn(NEW, desc);
+    mv.visitInsn(DUP);
+    mv.visitLdcInsn(name);
+    mv.visitVarInsn(ALOAD, 0);
+
+    if (assocBean) {
+      mv.visitInsn(ICONST_1);
+      mv.visitMethodInsn(INVOKESPECIAL, desc, "<init>", "(Ljava/lang/String;Ljava/lang/Object;I)V", false);
+    } else {
+      mv.visitMethodInsn(INVOKESPECIAL, desc, "<init>", "(Ljava/lang/String;Ljava/lang/Object;)V", false);
+    }
+
+    mv.visitFieldInsn(PUTFIELD, className, name, desc);
+    mv.visitLabel(l1);
+    mv.visitLineNumber(3, l1);
+    mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
+    mv.visitVarInsn(ALOAD, 0);
+    mv.visitFieldInsn(GETFIELD, className, name, desc);
+    mv.visitInsn(ARETURN);
+    Label l3 = new Label();
+    mv.visitLabel(l3);
+    mv.visitLocalVariable("this", "L" + className + ";", null, l0, l3, 0);
+    if (assocBean) {
+      mv.visitMaxs(6, 1);
+    } else {
+      mv.visitMaxs(5, 1);
+    }
+    mv.visitEnd();
+  }
 }

@@ -31,10 +31,5 @@ public class QProduct extends TQRootBean<Product,QProduct> {
     this.name = new PString<>("name", this);
   }
 
-  public PLong<QProduct> _version() {
-    if (version == null) {
-      version = new PLong<>("version", this);
-    }
-    return version;
-  }
+
 }
