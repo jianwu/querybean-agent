@@ -35,7 +35,7 @@ public class TypeQueryClassAdapter extends ClassVisitor {
     }
     this.className = name;
     this.signature = signature;
-    this.classInfo = new ClassInfo(name);
+    this.classInfo = new ClassInfo(enhanceContext, name);
   }
 
   /**
@@ -44,7 +44,7 @@ public class TypeQueryClassAdapter extends ClassVisitor {
   protected String getDomainClass() {
     int posStart = signature.indexOf('<');
     int posEnd = signature.indexOf(';', posStart+1);
-    return signature.substring(posStart+2, posEnd);
+    return signature.substring(posStart + 2, posEnd);
   }
 
   /**
@@ -76,22 +76,31 @@ public class TypeQueryClassAdapter extends ClassVisitor {
         addMarkerAnnotation();
       }
       if (name.equals("<init>") && desc.equals("(I)V")) {
+        if (isLog(3)) {
+          log("replace constructor code - <init> (I)V");
+        }
         // type query bean constructor enhancement
-        log(1, "replace constructor code");
-        return new ConstructorAdapter(className, getDomainClass(), cv);
+        return new ConstructorAdapter(classInfo, getDomainClass(), cv);
       }
-    } else if (classInfo.isTypeQueryUser()) {
-      // look for field use of query bean and swap to use our generated methods
+      if (isLog(8)) {
+        log("leaving untouched - " + name + " " + desc + " " + signature);
+      }
+      return super.visitMethod(access, name, desc, signature, exceptions);
     }
 
+    if (isLog(8)) {
+      log("... checking method " + name + " " + desc);
+    }
     MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
-    return mv;
+    return new MethodAdapter(mv, enhanceContext, classInfo);
   }
 
   @Override
   public void visitEnd() {
     if (classInfo.isTypeQueryBean()) {
       AddTypeQueryBeanMethods.add(cv, classInfo);
+    } else if (classInfo.isTypeQueryUser() && isLog(1)) {
+      classInfo.log("enhanced - getfield calls replaced");
     }
     super.visitEnd();
   }
@@ -102,7 +111,7 @@ public class TypeQueryClassAdapter extends ClassVisitor {
   private void addMarkerAnnotation() {
 
     if (isLog(4)) {
-      log(4, "enhancing - detection ");
+      log("... adding marker annotation");
     }
     AnnotationVisitor av = cv.visitAnnotation(ClassInfo.ANNOTATION_ALREADY_ENHANCED_MARKER, true);
     if (av != null) {
@@ -112,12 +121,6 @@ public class TypeQueryClassAdapter extends ClassVisitor {
 
   protected boolean isLog(int level) {
     return enhanceContext.isLog(level);
-  }
-
-  protected void log(int level, String msg) {
-    if (isLog(level)) {
-      enhanceContext.log(className, msg);
-    }
   }
 
   protected void log(String msg) {

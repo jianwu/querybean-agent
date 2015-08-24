@@ -1,6 +1,8 @@
 package org.avaje.ebean.typequery.agent;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Helper object used to ignore known classes. We only want to enhance the
@@ -17,44 +19,47 @@ import java.util.HashMap;
  */
 public class IgnoreClassHelper {
 
-  private final String[] processPackages;
+  private static final Set<String> ignoreOneLevel = new HashSet<>();
 
-  public IgnoreClassHelper(String agentArgs) {
+  private static final Set<String> ignoreTwoLevel = new HashSet<>();
 
-    HashMap<String, String> args = ArgParser.parse(agentArgs);
-    String packages = args.get("packages");
-    if (packages != null) {
-      String[] pkgs = packages.split(",");
-      processPackages = new String[pkgs.length];
-      for (int i = 0; i < pkgs.length; i++) {
-        processPackages[i] = convertPackage(pkgs[i]);
-      }
-    } else {
-      processPackages = new String[0];
-    }
+  static  {
+    ignoreOneLevel.add("java");
+    ignoreOneLevel.add("javax");
+    ignoreOneLevel.add("play");
+    ignoreOneLevel.add("sbt");
+    ignoreOneLevel.add("scala");
+    ignoreOneLevel.add("sun");
+    ignoreOneLevel.add("sunw");
+    ignoreOneLevel.add("oracle");
+    ignoreOneLevel.add("groovy");
+    ignoreOneLevel.add("junit");
+
+    ignoreTwoLevel.add("com/sun");
+    ignoreTwoLevel.add("org/wc3");
+    ignoreTwoLevel.add("org/xml");
+    ignoreTwoLevel.add("org/junit");
+    ignoreTwoLevel.add("com/sun");
+    ignoreTwoLevel.add("org/apache");
+    ignoreTwoLevel.add("org/eclipse");
+    ignoreTwoLevel.add("org/joda");
+    ignoreTwoLevel.add("com/mysql");
+    ignoreTwoLevel.add("org/postgresql");
+    ignoreTwoLevel.add("org/h2");
+    ignoreTwoLevel.add("com/h2database");
+    ignoreTwoLevel.add("ch/qos");
+    ignoreTwoLevel.add("org/slf4j");
+    ignoreTwoLevel.add("com/fasterxml");
+    ignoreTwoLevel.add("org/assertj");
+    ignoreTwoLevel.add("org/hamcrest");
+    ignoreTwoLevel.add("org/mockito");
+    ignoreTwoLevel.add("org/objenesis");
   }
 
-  /**
-   * Convert dots/periods to slashes in the package name.
-   */
-  private String convertPackage(String pkg) {
+  private final String[] processPackages;
 
-    pkg = pkg.trim().replace('.', '/');
-
-    if (pkg.endsWith("*")) {
-      // wild card, remove the * ... and
-      // don't add a "/" to the end
-      return pkg.substring(0, pkg.length() - 1);
-
-    } else if (pkg.endsWith("/")) {
-      // already ends in "/"
-      return pkg;
-
-    } else {
-      // add "/" so we don't pick up another
-      // package with a similar starting name
-      return pkg + "/";
-    }
+  public IgnoreClassHelper(String[] processPackages) {
+    this.processPackages = processPackages;
   }
 
   /**
@@ -64,7 +69,7 @@ public class IgnoreClassHelper {
    * Any class at any depth under the package can be processed and all others
    * ignored.
    * </p>
-   * 
+   *
    * @return true if the class can be ignored
    */
   private boolean specificMatching(String className) {
@@ -86,9 +91,9 @@ public class IgnoreClassHelper {
    * enhancement on classes that we know are not part of the application code
    * and should not be enhanced.
    * </p>
-   * 
-   * @param className
-   *          the className of the class being defined.
+   *
+   * @param className the className of the class being defined.
+   *
    * @return true if this class should not be processed.
    */
   public boolean isIgnoreClass(String className) {
@@ -96,7 +101,6 @@ public class IgnoreClassHelper {
     if (className == null) {
       return true;
     }
-    className = className.replace('.', '/');
 
     if (processPackages.length > 0) {
       // use specific positive matching
@@ -104,54 +108,26 @@ public class IgnoreClassHelper {
     }
 
     // we don't have specific packages to process so instead
-    // we will ignore packages that we know we don't want to
-    // process (they won't contain entity beans etc).
+    // we will ignore packages that we know we don't want
 
-    // ignore the JDK classes ...
-    if (className.startsWith("java/") || className.startsWith("javax/")
-        || className.startsWith("play/") || className.startsWith("sbt/") || className.startsWith("scala/")) {
-      return true;
-    }
-    if (className.startsWith("sun/") || className.startsWith("sunw/") || className.startsWith("com/sun/")) {
-      return true;
-    }
-    if (className.startsWith("org/wc3/") || className.startsWith("org/xml/")) {
-      return true;
-    }
-    if (className.startsWith("org/junit/") || className.startsWith("junit/")) {
-      return true;
-    }
-    // ignore apache libraries
-    if (className.startsWith("org/apache/")) {
-      return true;
-    }
-    if (className.startsWith("org/eclipse/")) {
-      return true;
-    }
-    if (className.startsWith("org/joda/")) {
-      return true;
-    }
-    // ignore mysql jdbc drivers
-    if (className.startsWith("com/mysql/jdbc")) {
-      return true;
-    }
-    // ignore postgres jdbc drivers
-    if (className.startsWith("org/postgresql/")) {
-      return true;
-    }
-    // ignore h2
-    if (className.startsWith("org/h2/")) {
-      return true;
-    }
-    // ignore oracle
-    if (className.startsWith("oracle/")) {
-      return true;
-    }
-    // ignore base groovy classes
-    if (className.startsWith("groovy/")) {
-      return true;
-    }
     // ignore $Proxy classes
-    return className.startsWith("$");
+    if (className.startsWith("$")) {
+      return true;
+    }
+
+    int firstSlash = className.indexOf('/');
+    if (firstSlash == -1) {
+      return true;
+    }
+    String firstPackage = className.substring(0, firstSlash);
+    if (ignoreOneLevel.contains(firstPackage)) {
+      return true;
+    }
+    int secondSlash = className.indexOf('/', firstSlash+1);
+    if (secondSlash == -1) {
+      return false;
+    }
+    String secondPackage = className.substring(0, secondSlash);
+    return ignoreTwoLevel.contains(secondPackage);
   }
 }

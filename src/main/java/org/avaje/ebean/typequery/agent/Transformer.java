@@ -1,6 +1,5 @@
 package org.avaje.ebean.typequery.agent;
 
-//import org.avaje.ebean.typequery.agent.asm.ClassWriter;
 import org.avaje.ebean.typequery.agent.asm.ClassReader;
 import org.avaje.ebean.typequery.agent.asm.ClassWriter;
 
@@ -67,7 +66,7 @@ public class Transformer implements ClassFileTransformer {
 
       // ignore JDK and JDBC classes etc
       if (enhanceContext.isIgnoreClass(className)) {
-        enhanceContext.log(9, "ignore class ", className);
+        enhanceContext.log(8, "ignore class ", className);
         return null;
       }
 
@@ -100,19 +99,10 @@ public class Transformer implements ClassFileTransformer {
     try {
 
       cr.accept(ca, ClassReader.EXPAND_FRAMES);
-      if (ca.isLog(3)) {
-        ca.log("enhanced");
+      if (ca.isLog(9)) {
+        ca.log("... completed");
       }
-
-      if (enhanceContext.isReadOnly()) {
-        if (ca.isLog(3)) {
-          ca.log("readonly mode - not enhanced");
-        }
-        return null;
-
-      } else {
-        return cw.toByteArray();
-      }
+      return cw.toByteArray();
 
     } catch (AlreadyEnhancedException e) {
       if (ca.isLog(1)) {

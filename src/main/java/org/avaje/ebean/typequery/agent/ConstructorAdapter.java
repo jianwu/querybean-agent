@@ -16,19 +16,19 @@ import org.avaje.ebean.typequery.agent.asm.TypePath;
  */
 public class ConstructorAdapter extends MethodVisitor implements Opcodes {
 
-  final String className;
+  private final ClassInfo classInfo;
 
-  final String domainClass;
+  private final String domainClass;
 
-  final ClassVisitor cv;
+  private final ClassVisitor cv;
 
   /**
    * Construct for a query bean class given its associated entity bean domain class and a class visitor.
    */
-  public ConstructorAdapter(String className, String domainClass, ClassVisitor cv) {
+  public ConstructorAdapter(ClassInfo classInfo, String domainClass, ClassVisitor cv) {
     super(Opcodes.ASM5, null);
     this.cv = cv;
-    this.className = className;
+    this.classInfo = classInfo;
     this.domainClass = domainClass;
   }
 
@@ -48,14 +48,14 @@ public class ConstructorAdapter extends MethodVisitor implements Opcodes {
     mv.visitLineNumber(2, l1);
     mv.visitVarInsn(ALOAD, 0);
     mv.visitVarInsn(ALOAD, 0);
-    mv.visitMethodInsn(INVOKEVIRTUAL, className, "setRoot", "(Ljava/lang/Object;)V", false);
+    mv.visitMethodInsn(INVOKEVIRTUAL, classInfo.getClassName(), "setRoot", "(Ljava/lang/Object;)V", false);
     Label l2 = new Label();
     mv.visitLabel(l2);
     mv.visitLineNumber(3, l2);
     mv.visitInsn(RETURN);
     Label l3 = new Label();
     mv.visitLabel(l3);
-    mv.visitLocalVariable("this", "L"+className+";", null, l0, l3, 0);
+    mv.visitLocalVariable("this", "L"+classInfo.getClassName()+";", null, l0, l3, 0);
     mv.visitLocalVariable("maxDepth", "I", null, l0, l3, 1);
     mv.visitMaxs(2, 2);
     mv.visitEnd();

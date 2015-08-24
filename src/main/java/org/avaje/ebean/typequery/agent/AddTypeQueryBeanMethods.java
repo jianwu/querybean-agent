@@ -19,7 +19,6 @@ public class AddTypeQueryBeanMethods implements Opcodes {
     List<FieldInfo> fields = classInfo.getFields();
 
     for (FieldInfo field : fields) {
-      System.out.println("generate method for "+field);
       field.writeMethod(cw);
     }
   }

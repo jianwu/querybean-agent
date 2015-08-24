@@ -1,6 +1,7 @@
 package org.avaje.ebean.typequery.agent;
 
 import java.io.PrintStream;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -16,9 +17,7 @@ public class EnhanceContext {
 
 	private final HashMap<String, String> agentArgsMap;
 
-	private final boolean readOnly;
-
-	private final boolean sysoutOnCollect;
+  private final String[] queryBeanPackages;
 
 	private PrintStream logout;
 
@@ -29,9 +28,19 @@ public class EnhanceContext {
 	 */
 	public EnhanceContext(String agentArgs) {
 
- 		this.ignoreClassHelper = new IgnoreClassHelper(agentArgs);
- 		this.agentArgsMap = ArgParser.parse(agentArgs);
- 		this.logout = System.out;
+    this.agentArgsMap = ArgParser.parse(agentArgs);
+    String[] queryBeans = parsePackages(agentArgsMap.get("querybeanpackages"));
+    String[] packages = parsePackages(agentArgsMap.get("packages"));
+    if (packages.length > 0) {
+      String[] all = mergePackages(queryBeans, packages);
+      this.ignoreClassHelper = new IgnoreClassHelper(all);
+    } else {
+      // no explicit packages (so use built in ignores)
+      this.ignoreClassHelper = new IgnoreClassHelper(new String[0]);
+    }
+
+    this.queryBeanPackages = queryBeans;//convertDotToSlash(queryBeans);
+    this.logout = System.out;
 
 		String debugValue = agentArgsMap.get("debug");
  		if (debugValue != null) {
@@ -43,27 +52,66 @@ public class EnhanceContext {
 				logger.log(Level.WARNING, msg);
 			}
 		}
-
-    this.readOnly = getPropertyBoolean("readonly", false);
-		this.sysoutOnCollect = getPropertyBoolean("sysoutoncollect", false);
+    if (logLevel > 1) {
+      log(1, "TypeQuery Agent: queryBeanPackages", Arrays.toString(queryBeanPackages));
+      log(1, "TypeQuery Agent: packages", Arrays.toString(packages));
+    }
 	}
 
-	/**
-	 * Return a value from the agent arguments using its key.
-	 */
-	public String getProperty(String key){
-		return agentArgsMap.get(key.toLowerCase());
-	}
+  private String[] mergePackages(String[] packages1, String[] packages2) {
 
-	public boolean getPropertyBoolean(String key, boolean dflt){
-		String s = getProperty(key);
-		if (s == null){
-			return dflt;
-		} else {
-			return s.trim().equalsIgnoreCase("true");
-		}
-	}
-  
+    String[] all = new String[packages1.length + packages2.length];
+    System.arraycopy(packages1, 0, all, 0, packages1.length);
+    System.arraycopy(packages2, 0, all, packages1.length + 0, packages2.length);
+    return all;
+  }
+
+  private String[] parsePackages(String packages) {
+    if (packages == null || packages.trim().length() == 0) {
+      return new String[0];
+    }
+    String[] commaSplit = packages.split(",");
+    String[] processPackages = new String[commaSplit.length];
+    for (int i = 0; i < commaSplit.length; i++) {
+      processPackages[i] = convertPackage(commaSplit[i]);
+    }
+    return processPackages;
+  }
+
+  private String convertPackage(String pkg) {
+
+    pkg = pkg.replace('.','/');
+    if (pkg.endsWith("*")) {
+      // wild card, remove the * ... and don't add a "." to the end
+      return pkg.substring(0, pkg.length() - 1);
+
+    } else if (pkg.endsWith("/")) {
+      // already ends in "/"
+      return pkg;
+
+    } else {
+      // add "." so we don't pick up another
+      // package with a similar starting name
+      return pkg + "/";
+    }
+  }
+
+  /**
+   * Return true if the owner class is a type query bean.
+   * <p>
+   * If true typically means the caller needs to change GETFIELD calls to instead invoke the generated
+   * 'property access' methods.
+   * </p>
+   */
+  public boolean isTypeQueryBean(String owner) {
+    for (int i = 0; i < queryBeanPackages.length; i++) {
+      if (owner.startsWith(queryBeanPackages[i])) {
+        return true;
+      }
+    }
+    return false;
+  }
+
 	/**
 	 * Return true if this class should be ignored. That is JDK classes and
 	 * known libraries JDBC drivers etc can be skipped.
@@ -113,22 +161,4 @@ public class EnhanceContext {
 		return logLevel;
 	}
 
-	/**
-	 * Return true if this should go through the enhancement process but not
-	 * actually save the enhanced classes.
-	 * <p>
-	 * Set this to true to run through the enhancement process without actually
-	 * doing the enhancement for debugging etc.
-	 * </p>
-	 */
-	public boolean isReadOnly() {
-		return readOnly;
-	}
-
-  /**
-   * Return true to add some debug sysout via the enhancement.
-   */
-  public boolean isSysoutOnCollect() {
-    return sysoutOnCollect;
-  }
 }

@@ -17,10 +17,9 @@ public class ClassInfo {
    */
   private static final String ANNOTATION_TYPE_QUERY_BEAN = "Lorg/avaje/ebean/typequery/TypeQueryBean;";
 
-  /**
-   * The TypeQueryUser annotation.
-   */
-  private static final String ANNOTATION_TYPE_QUERY_USER = "Lorg/avaje/ebean/typequery/TypeQueryUser;";
+  private final EnhanceContext enhanceContext;
+
+  private final String className;
 
   private boolean addedMarkerAnnotation;
 
@@ -30,12 +29,18 @@ public class ClassInfo {
 
   private boolean alreadyEnhanced;
 
-  private final String className;
+  private List<FieldInfo> fields;
 
-  private List<FieldInfo> fields = new ArrayList<FieldInfo>();
-
-  public ClassInfo(String className) {
+  public ClassInfo(EnhanceContext enhanceContext, String className) {
+    this.enhanceContext = enhanceContext;
     this.className = className;
+  }
+
+  /**
+   * Return the className.
+   */
+  public String getClassName() {
+    return className;
   }
 
   /**
@@ -73,17 +78,21 @@ public class ClassInfo {
   public void checkTypeQueryAnnotation(String desc) {
     if (isTypeQueryBeanAnnotation(desc)) {
       typeQueryBean = true;
-    } else if (isTypeQueryUserAnnotation(desc)) {
-      typeQueryUser = true;
     } else if (isAlreadyEnhancedAnnotation(desc)) {
       alreadyEnhanced = true;
     }
   }
 
+  /**
+   * Add the type query bean field. We will create a 'property access' method for each field.
+   */
   public void addField(int access, String name, String desc, String signature) {
 
     if (((access & Opcodes.ACC_PUBLIC) != 0)) {
-      fields.add(new FieldInfo(className, name, desc, signature));
+      if (fields == null) {
+        fields = new ArrayList<>();
+      }
+      fields.add(new FieldInfo(this, name, desc, signature));
     }
   }
 
@@ -102,16 +111,28 @@ public class ClassInfo {
   }
 
   /**
-   * Return true if the annotation is the TypeQueryUser annotation.
-   */
-  private boolean isTypeQueryUserAnnotation(String desc) {
-    return ANNOTATION_TYPE_QUERY_USER.equals(desc);
-  }
-
-  /**
    * Return the fields for a type query bean.
    */
   public List<FieldInfo> getFields() {
     return fields;
+  }
+
+  /**
+   * Note that a GETFIELD call has been replaced to method call.
+   */
+  public void addGetFieldIntercept(String owner, String name, String desc) {
+
+    if (isLog(2)) {
+      log("change getfield " + owner + " name:" + name);
+    }
+    typeQueryUser = true;
+  }
+
+  public boolean isLog(int level) {
+    return enhanceContext.isLog(level);
+  }
+
+  public void log(String msg) {
+    enhanceContext.log(className, msg);
   }
 }
