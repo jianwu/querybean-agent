@@ -16,33 +16,41 @@ import org.avaje.ebean.typequery.agent.asm.TypePath;
  */
 public class ConstructorAdapter extends MethodVisitor implements Opcodes {
 
+  private static final String TQROOT_BEAN = "org/avaje/ebean/typequery/TQRootBean";
+
   private final ClassInfo classInfo;
 
   private final String domainClass;
 
   private final ClassVisitor cv;
 
+  private final String desc;
+
+  private final String signature;
+
   /**
    * Construct for a query bean class given its associated entity bean domain class and a class visitor.
    */
-  public ConstructorAdapter(ClassInfo classInfo, String domainClass, ClassVisitor cv) {
+  public ConstructorAdapter(ClassInfo classInfo, String domainClass, ClassVisitor cv, String desc, String signature) {
     super(Opcodes.ASM5, null);
     this.cv = cv;
     this.classInfo = classInfo;
     this.domainClass = domainClass;
+    this.desc = desc;
+    this.signature = signature;
   }
 
   @Override
   public void visitCode() {
 
-    mv = cv.visitMethod(ACC_PUBLIC, "<init>", "(I)V", null, null);
+    mv = cv.visitMethod(ACC_PUBLIC, "<init>", desc, signature, null);
     mv.visitCode();
     Label l0 = new Label();
     mv.visitLabel(l0);
     mv.visitLineNumber(1, l0);
     mv.visitVarInsn(ALOAD, 0);
-    mv.visitLdcInsn(Type.getType("L"+domainClass+";"));
-    mv.visitMethodInsn(INVOKESPECIAL, "org/avaje/ebean/typequery/TQRootBean", "<init>", "(Ljava/lang/Class;)V", false);
+    mv.visitLdcInsn(Type.getType("L" + domainClass + ";"));
+    mv.visitMethodInsn(INVOKESPECIAL, TQROOT_BEAN, "<init>", "(Ljava/lang/Class;)V", false);
     Label l1 = new Label();
     mv.visitLabel(l1);
     mv.visitLineNumber(2, l1);
@@ -55,7 +63,7 @@ public class ConstructorAdapter extends MethodVisitor implements Opcodes {
     mv.visitInsn(RETURN);
     Label l3 = new Label();
     mv.visitLabel(l3);
-    mv.visitLocalVariable("this", "L"+classInfo.getClassName()+";", null, l0, l3, 0);
+    mv.visitLocalVariable("this", "L" + classInfo.getClassName() + ";", null, l0, l3, 0);
     mv.visitLocalVariable("maxDepth", "I", null, l0, l3, 1);
     mv.visitMaxs(2, 2);
     mv.visitEnd();
@@ -69,7 +77,7 @@ public class ConstructorAdapter extends MethodVisitor implements Opcodes {
   @Override
   public AnnotationVisitor visitAnnotationDefault() {
     // do nothing / consume existing
-    return  null;
+    return null;
   }
 
   @Override

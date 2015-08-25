@@ -26,14 +26,14 @@ public class QAddress extends TQRootBean<Address,QAddress> {
   public QAddress(int maxDepth) {
     super(Address.class);
     setRoot(this);
-    this.id = new PLong<>("id", this);
-    this.version = new PLong<>("version", this);
-    this.whenCreated = new PTimestamp<>("whenCreated", this);
-    this.whenUpdated = new PTimestamp<>("whenUpdated", this);
-    this.line1 = new PString<>("line1", this);
-    this.line2 = new PString<>("line2", this);
-    this.city = new PString<>("city", this);
-    this.country = new QAssocCountry<>("country", this, maxDepth);
+    this.id = new PLong<QAddress>("id", this);
+    this.version = new PLong<QAddress>("version", this);
+    this.whenCreated = new PTimestamp<QAddress>("whenCreated", this);
+    this.whenUpdated = new PTimestamp<QAddress>("whenUpdated", this);
+    this.line1 = new PString<QAddress>("line1", this);
+    this.line2 = new PString<QAddress>("line2", this);
+    this.city = new PString<QAddress>("city", this);
+    this.country = new QAssocCountry<QAddress>("country", this, maxDepth);
   }
 
 //  public PLong<QAddress> _version() {

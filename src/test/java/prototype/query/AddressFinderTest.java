@@ -15,8 +15,8 @@ public class AddressFinderTest extends BaseTest {
     QAddress qAddress = addressFinder.simpleFind();
 
     assertNotNull(qAddress.version);
-    assertNotNull(qAddress.city);
     assertNotNull(qAddress.country);
+    assertNotNull(qAddress.city);
   }
 
 }

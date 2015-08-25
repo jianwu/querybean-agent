@@ -1,6 +1,5 @@
 package org.avaje.ebean.typequery.agent;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -19,9 +18,9 @@ import java.util.Set;
  */
 public class IgnoreClassHelper {
 
-  private static final Set<String> ignoreOneLevel = new HashSet<>();
+  private static final Set<String> ignoreOneLevel = new HashSet<String>();
 
-  private static final Set<String> ignoreTwoLevel = new HashSet<>();
+  private static final Set<String> ignoreTwoLevel = new HashSet<String>();
 
   static  {
     ignoreOneLevel.add("java");

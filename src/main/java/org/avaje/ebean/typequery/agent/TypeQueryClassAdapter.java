@@ -8,21 +8,19 @@ import org.avaje.ebean.typequery.agent.asm.MethodVisitor;
 import org.avaje.ebean.typequery.agent.asm.Opcodes;
 
 /**
+ * Reads/visits the class and performs the appropriate enhancement if necessary.
  */
 public class TypeQueryClassAdapter extends ClassVisitor {
 
-  EnhanceContext enhanceContext;
+  private final EnhanceContext enhanceContext;
 
-  ClassLoader loader;
+  private String className;
+  private String signature;
+  private ClassInfo classInfo;
 
-  String className;
-  String signature;
-  ClassInfo classInfo;
-
-  public TypeQueryClassAdapter(ClassWriter cw, EnhanceContext enhanceContext, ClassLoader loader) {
+  public TypeQueryClassAdapter(ClassWriter cw, EnhanceContext enhanceContext) {
     super(Opcodes.ASM5, cw);
     this.enhanceContext = enhanceContext;
-    this.loader = loader;
   }
 
 
@@ -75,15 +73,15 @@ public class TypeQueryClassAdapter extends ClassVisitor {
       if (classInfo.addMarkerAnnotation()) {
         addMarkerAnnotation();
       }
-      if (name.equals("<init>") && desc.equals("(I)V")) {
+      if (name.equals("<init>")) {
         if (isLog(3)) {
-          log("replace constructor code - <init> (I)V");
+          log("replace constructor code <init> "+desc);
         }
         // type query bean constructor enhancement
-        return new ConstructorAdapter(classInfo, getDomainClass(), cv);
+        return new ConstructorAdapter(classInfo, getDomainClass(), cv, desc, signature);
       }
-      if (isLog(8)) {
-        log("leaving untouched - " + name + " " + desc + " " + signature);
+      if (isLog(5)) {
+        log("leaving method as is - " + name + " " + desc + " " + signature);
       }
       return super.visitMethod(access, name, desc, signature, exceptions);
     }

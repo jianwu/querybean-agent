@@ -90,7 +90,7 @@ public class ClassInfo {
 
     if (((access & Opcodes.ACC_PUBLIC) != 0)) {
       if (fields == null) {
-        fields = new ArrayList<>();
+        fields = new ArrayList<FieldInfo>();
       }
       fields.add(new FieldInfo(this, name, desc, signature));
     }
@@ -120,7 +120,7 @@ public class ClassInfo {
   /**
    * Note that a GETFIELD call has been replaced to method call.
    */
-  public void addGetFieldIntercept(String owner, String name, String desc) {
+  public void addGetFieldIntercept(String owner, String name) {
 
     if (isLog(2)) {
       log("change getfield " + owner + " name:" + name);

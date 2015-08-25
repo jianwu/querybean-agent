@@ -23,12 +23,12 @@ public class QProduct extends TQRootBean<Product,QProduct> {
   public QProduct(int maxDepth) {
     super(Product.class);
     setRoot(this);
-    this.id = new PLong<>("id", this);
-    this.version = new PLong<>("version", this);
-    this.whenCreated = new PTimestamp<>("whenCreated", this);
-    this.whenUpdated = new PTimestamp<>("whenUpdated", this);
-    this.sku = new PString<>("sku", this);
-    this.name = new PString<>("name", this);
+    this.id = new PLong<QProduct>("id", this);
+    this.version = new PLong<QProduct>("version", this);
+    this.whenCreated = new PTimestamp<QProduct>("whenCreated", this);
+    this.whenUpdated = new PTimestamp<QProduct>("whenUpdated", this);
+    this.sku = new PString<QProduct>("sku", this);
+    this.name = new PString<QProduct>("name", this);
   }
 
 

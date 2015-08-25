@@ -4,7 +4,7 @@ import org.avaje.ebean.typequery.agent.asm.MethodVisitor;
 import org.avaje.ebean.typequery.agent.asm.Opcodes;
 
 /**
- * Adapter than changes GETFIELD calls to type query beans to instead use the generated
+ * Adapter that changes GETFIELD calls to type query beans to instead use the generated
  * 'property access' methods.
  */
 public class MethodAdapter extends MethodVisitor implements Opcodes {
@@ -23,7 +23,7 @@ public class MethodAdapter extends MethodVisitor implements Opcodes {
   public void visitFieldInsn(int opcode, String owner, String name, String desc) {
 
     if (opcode == GETFIELD && enhanceContext.isTypeQueryBean(owner)) {
-      classInfo.addGetFieldIntercept(owner, name, desc);
+      classInfo.addGetFieldIntercept(owner, name);
       mv.visitMethodInsn(INVOKEVIRTUAL, owner, "_" + name, "()" + desc, false);
     } else {
       super.visitFieldInsn(opcode, owner, name, desc);

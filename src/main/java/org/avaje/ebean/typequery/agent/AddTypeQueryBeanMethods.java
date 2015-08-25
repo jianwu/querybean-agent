@@ -10,7 +10,6 @@ import java.util.List;
  */
 public class AddTypeQueryBeanMethods implements Opcodes {
 
-
   /**
    * Add the generated 'property access' methods.
    */

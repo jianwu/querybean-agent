@@ -3,19 +3,14 @@ package org.avaje.ebean.typequery.agent;
 import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Set;
 
 /**
  * Used to hold meta data, arguments and log levels for the enhancement.
  */
 public class EnhanceContext {
 
-  private static final Logger logger = Logger.getLogger(EnhanceContext.class.getName());
-
 	private final IgnoreClassHelper ignoreClassHelper;
-
-	private final HashMap<String, String> agentArgsMap;
 
   private final String[] queryBeanPackages;
 
@@ -28,44 +23,52 @@ public class EnhanceContext {
 	 */
 	public EnhanceContext(String agentArgs) {
 
-    this.agentArgsMap = ArgParser.parse(agentArgs);
-    String[] queryBeans = parsePackages(agentArgsMap.get("querybeanpackages"));
+    this.logout = System.out;
+    this.queryBeanPackages = convert(AgentManifestReader.read());
+    if (queryBeanPackages.length == 0) {
+      System.err.println("---------------------------------------------------------------------------");
+      System.err.println("TypeQuery Agent: No packages containing type query beans - this won't work.");
+      System.err.println("---------------------------------------------------------------------------");
+    }
+
+    HashMap<String, String> agentArgsMap = ArgParser.parse(agentArgs);
     String[] packages = parsePackages(agentArgsMap.get("packages"));
     if (packages.length > 0) {
-      String[] all = mergePackages(queryBeans, packages);
+      String[] all = mergePackages(queryBeanPackages, packages);
       this.ignoreClassHelper = new IgnoreClassHelper(all);
     } else {
       // no explicit packages (so use built in ignores)
       this.ignoreClassHelper = new IgnoreClassHelper(new String[0]);
     }
 
-    this.queryBeanPackages = queryBeans;//convertDotToSlash(queryBeans);
-    this.logout = System.out;
-
-		String debugValue = agentArgsMap.get("debug");
- 		if (debugValue != null) {
-			try {
-				logLevel = Integer.parseInt(debugValue.trim());
-			} catch (NumberFormatException e) {
-				String msg = "agent debug argument [" + debugValue+ "] is not an int? ignoring.";
-        System.err.println(msg);
-				logger.log(Level.WARNING, msg);
-			}
-		}
+    String debugValue = agentArgsMap.get("debug");
+    if (debugValue != null) {
+      try {
+        logLevel = Integer.parseInt(debugValue.trim());
+      } catch (NumberFormatException e) {
+        System.err.println("TypeQuery Agent: debug argument [" + debugValue + "] is not an int? ignoring.");
+      }
+    }
     if (logLevel > 1) {
       log(1, "TypeQuery Agent: queryBeanPackages", Arrays.toString(queryBeanPackages));
       log(1, "TypeQuery Agent: packages", Arrays.toString(packages));
     }
-	}
+  }
 
+  /**
+   * Merge the packages to include in the enhancement (all other packages will now be ignored).
+   */
   private String[] mergePackages(String[] packages1, String[] packages2) {
 
     String[] all = new String[packages1.length + packages2.length];
     System.arraycopy(packages1, 0, all, 0, packages1.length);
-    System.arraycopy(packages2, 0, all, packages1.length + 0, packages2.length);
+    System.arraycopy(packages2, 0, all, packages1.length, packages2.length);
     return all;
   }
 
+  /**
+   * Split using delimiter and convert to slash notation.
+   */
   private String[] parsePackages(String packages) {
     if (packages == null || packages.trim().length() == 0) {
       return new String[0];
@@ -78,6 +81,20 @@ public class EnhanceContext {
     return processPackages;
   }
 
+  /**
+   * Convert to an array with slash notation.
+   */
+  private String[] convert(Set<String> pkg) {
+    String[] asArray = pkg.toArray(new String[pkg.size()]);
+    for (int i = 0; i < asArray.length; i++) {
+      asArray[i] = convertPackage(asArray[i]);
+    }
+    return asArray;
+  }
+
+  /**
+   * Concert to slash notation taking into account trailing wildcard.
+   */
   private String convertPackage(String pkg) {
 
     pkg = pkg.replace('.','/');
@@ -86,11 +103,10 @@ public class EnhanceContext {
       return pkg.substring(0, pkg.length() - 1);
 
     } else if (pkg.endsWith("/")) {
-      // already ends in "/"
       return pkg;
 
     } else {
-      // add "." so we don't pick up another
+      // add "/" so we don't pick up another
       // package with a similar starting name
       return pkg + "/";
     }

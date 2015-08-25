@@ -71,7 +71,7 @@ public class Transformer implements ClassFileTransformer {
       }
 
       enhanceContext.log(8, "look at ", className);
-      return enhancement(loader, classfileBuffer);
+      return enhancement(classfileBuffer);
      
     } catch (NoEnhancementRequiredException e) {
       // the class is an interface
@@ -89,12 +89,11 @@ public class Transformer implements ClassFileTransformer {
   /**
    * Perform enhancement.
    */
-  private byte[] enhancement(ClassLoader loader, byte[] classfileBuffer) {
+  private byte[] enhancement(byte[] classfileBuffer) {
 
     ClassReader cr = new ClassReader(classfileBuffer);
-    //ClassWriter cw = new CLAwareClassWriter(ClassWriter.COMPUTE_FRAMES + ClassWriter.COMPUTE_MAXS, loader);
-    ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES + ClassWriter.COMPUTE_MAXS);//, loader);
-    TypeQueryClassAdapter ca = new TypeQueryClassAdapter(cw, enhanceContext, loader);
+    ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES + ClassWriter.COMPUTE_MAXS);
+    TypeQueryClassAdapter ca = new TypeQueryClassAdapter(cw, enhanceContext);
 
     try {
 
