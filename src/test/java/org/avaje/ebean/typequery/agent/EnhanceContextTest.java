@@ -10,7 +10,7 @@ public class EnhanceContextTest {
   @Test
   public void testInclude() {
 
-    String args = "queryBeanPackages=org.example.domain.query;packages=org.example";
+    String args = "packages=org.example,org.example.domain.query";
 
     EnhanceContext context = new EnhanceContext(args);
 
