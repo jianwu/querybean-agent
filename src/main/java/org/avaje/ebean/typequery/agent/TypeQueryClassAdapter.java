@@ -12,8 +12,11 @@ import org.avaje.ebean.typequery.agent.asm.Opcodes;
  */
 public class TypeQueryClassAdapter extends ClassVisitor {
 
+  private static final String TQ_ROOT_BEAN = "org/avaje/ebean/typequery/TQRootBean";
+
   private final EnhanceContext enhanceContext;
 
+  private boolean typeQueryRootBean;
   private String className;
   private String signature;
   private ClassInfo classInfo;
@@ -31,6 +34,7 @@ public class TypeQueryClassAdapter extends ClassVisitor {
     if ((access & Opcodes.ACC_INTERFACE) != 0) {
       throw new NoEnhancementRequiredException("Not enhancing interface");
     }
+    this.typeQueryRootBean = TQ_ROOT_BEAN.equals(superName);
     this.className = name;
     this.signature = signature;
     this.classInfo = new ClassInfo(enhanceContext, name);
@@ -66,6 +70,8 @@ public class TypeQueryClassAdapter extends ClassVisitor {
     return super.visitField(access, name, desc, signature, value);
   }
 
+  private static final String ASSOC_BEAN_CONSTRUCTOR_DESC = "(Ljava/lang/String;Ljava/lang/Object;Ljava/lang/String;I)V";
+
   @Override
   public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
 
@@ -74,11 +80,21 @@ public class TypeQueryClassAdapter extends ClassVisitor {
         addMarkerAnnotation();
       }
       if (name.equals("<init>")) {
+        if (!typeQueryRootBean) {
+          if (desc.equals(ASSOC_BEAN_CONSTRUCTOR_DESC)) {
+            if (isLog(3)) {
+              log("replace assoc bean constructor code <init> "+desc);
+            }
+            return new TypeQueryAssocConstructor(classInfo, cv, desc, signature);
+          } else {
+            // leave this constructor as is
+            return super.visitMethod(access, name, desc, signature, exceptions);
+          }
+        }
         if (isLog(3)) {
           log("replace constructor code <init> "+desc);
         }
-        // type query bean constructor enhancement
-        return new ConstructorAdapter(classInfo, getDomainClass(), cv, desc, signature);
+        return new TypeQueryConstructorAdapter(classInfo, getDomainClass(), cv, desc, signature);
       }
       if (isLog(5)) {
         log("leaving method as is - " + name + " " + desc + " " + signature);
@@ -96,7 +112,10 @@ public class TypeQueryClassAdapter extends ClassVisitor {
   @Override
   public void visitEnd() {
     if (classInfo.isTypeQueryBean()) {
-      AddTypeQueryBeanMethods.add(cv, classInfo);
+      if (!typeQueryRootBean) {
+        TypeQueryAddFields.add(cv);
+      }
+      TypeQueryAddMethods.add(cv, classInfo, typeQueryRootBean);
     } else if (classInfo.isTypeQueryUser() && isLog(1)) {
       classInfo.log("enhanced - getfield calls replaced");
     }

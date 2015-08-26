@@ -1,6 +1,6 @@
 package prototype.query;
 
-public class AddressFinder {
+public class Finder {
 
 
   public QAddress simpleFind() {
@@ -14,5 +14,14 @@ public class AddressFinder {
     //query._version().lessThan(3);
 
     return query;
+  }
+
+  public QOrder orderQuery() {
+
+    QOrder qOrder = new QOrder();
+    qOrder.id.greaterThan(1);
+    qOrder.details.product.id.equalTo(12);
+
+    return qOrder;
   }
 }

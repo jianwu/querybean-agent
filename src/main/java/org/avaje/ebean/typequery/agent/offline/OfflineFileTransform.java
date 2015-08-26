@@ -14,11 +14,12 @@ import java.lang.instrument.IllegalClassFormatException;
  */
 public class OfflineFileTransform {
 
-	final InputStreamTransform inputStreamTransform;
+  private final InputStreamTransform inputStreamTransform;
 
-	final String inDir;
+  private final String inDir;
 
-	final String outDir;
+  private final String outDir;
+
 	private TransformationListener listener;
 
 	/**
@@ -92,7 +93,7 @@ public class OfflineFileTransform {
 
 	private void processPackage(String dir, boolean recurse) {
 
-		inputStreamTransform.log(1, "transform> pkg: ",dir);
+		inputStreamTransform.log(5, "transform> pkg: ",dir);
 
 		String dirPath = inDir + "/" + dir;
 		File d = new File(dirPath);

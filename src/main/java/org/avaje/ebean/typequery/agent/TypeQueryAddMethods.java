@@ -8,17 +8,17 @@ import java.util.List;
 /**
  * Add generated 'property access' methods for the fields.
  */
-public class AddTypeQueryBeanMethods implements Opcodes {
+public class TypeQueryAddMethods implements Opcodes {
 
   /**
    * Add the generated 'property access' methods.
    */
-  public static void add(ClassVisitor  cw, ClassInfo classInfo) {
+  public static void add(ClassVisitor  cw, ClassInfo classInfo, boolean typeQueryRootBean) {
 
     List<FieldInfo> fields = classInfo.getFields();
 
     for (FieldInfo field : fields) {
-      field.writeMethod(cw);
+      field.writeMethod(cw, typeQueryRootBean);
     }
   }
 
