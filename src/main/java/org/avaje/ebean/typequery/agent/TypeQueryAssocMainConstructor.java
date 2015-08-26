@@ -3,17 +3,12 @@ package org.avaje.ebean.typequery.agent;
 import org.avaje.ebean.typequery.agent.asm.ClassVisitor;
 import org.avaje.ebean.typequery.agent.asm.Label;
 import org.avaje.ebean.typequery.agent.asm.Opcodes;
-import org.avaje.ebean.typequery.agent.asm.Type;
 
 /**
  * Changes the existing constructor to remove all the field initialisation as these are going to be
  * initialised lazily by calls to our generated methods.
  */
-public class TypeQueryAssocConstructor extends BaseConstructorAdapter implements Opcodes {
-
-  public static final String FIELD_PATH = "_path";
-  public static final String FIELD_ROOT = "_root";
-  public static final String TQPATH = "org/avaje/ebean/typequery/TQPath";
+public class TypeQueryAssocMainConstructor extends BaseConstructorAdapter implements Opcodes, Constants {
 
   private final ClassInfo classInfo;
 
@@ -26,7 +21,7 @@ public class TypeQueryAssocConstructor extends BaseConstructorAdapter implements
   /**
    * Construct for a query bean class given its associated entity bean domain class and a class visitor.
    */
-  public TypeQueryAssocConstructor(ClassInfo classInfo, ClassVisitor cv, String desc, String signature) {
+  public TypeQueryAssocMainConstructor(ClassInfo classInfo, ClassVisitor cv, String desc, String signature) {
     super();
     this.cv = cv;
     this.classInfo = classInfo;
@@ -37,7 +32,6 @@ public class TypeQueryAssocConstructor extends BaseConstructorAdapter implements
   @Override
   public void visitCode() {
 
-    //mv = cv.visitMethod(ACC_PUBLIC, "<init>", "(Ljava/lang/String;Ljava/lang/Object;Ljava/lang/String;I)V", "(Ljava/lang/String;TR;Ljava/lang/String;I)V", null);
     mv = cv.visitMethod(ACC_PUBLIC, "<init>", desc, signature, null);
     mv.visitCode();
     Label l0 = new Label();

@@ -1,5 +1,7 @@
 package org.avaje.ebean.typequery.agent;
 
+import org.avaje.ebean.typequery.agent.asm.ClassVisitor;
+import org.avaje.ebean.typequery.agent.asm.FieldVisitor;
 import org.avaje.ebean.typequery.agent.asm.Opcodes;
 
 import java.util.ArrayList;
@@ -8,14 +10,8 @@ import java.util.List;
 /**
  * Holds meta information for a class.
  */
-public class ClassInfo {
+public class ClassInfo implements Constants {
 
-  public static final String ANNOTATION_ALREADY_ENHANCED_MARKER = "Lorg/avaje/ebean/typequery/AlreadyEnhancedMarker;";
-
-  /**
-   * The TypeQueryBean annotation.
-   */
-  private static final String ANNOTATION_TYPE_QUERY_BEAN = "Lorg/avaje/ebean/typequery/TypeQueryBean;";
 
   private final EnhanceContext enhanceContext;
 
@@ -30,6 +26,10 @@ public class ClassInfo {
   private boolean alreadyEnhanced;
 
   private List<FieldInfo> fields;
+
+  private boolean hasBasicConstructor;
+
+  private boolean hasMainConstructor;
 
   public ClassInfo(EnhanceContext enhanceContext, String className) {
     this.enhanceContext = enhanceContext;
@@ -135,4 +135,63 @@ public class ClassInfo {
   public void log(String msg) {
     enhanceContext.log(className, msg);
   }
+
+  /**
+   * There is a basic constructor on the assoc bean which is being overwritten (so don't need to add later).
+   */
+  public void setHasBasicConstructor() {
+    if (isLog(3)) {
+      log("replace assoc bean basic constructor");
+    }
+    hasBasicConstructor = true;
+  }
+
+  /**
+   * There is a main constructor on the assoc bean which is being overwritten (so don't need to add later).
+   */
+  public void setHasMainConstructor() {
+    if (isLog(3)) {
+      log("replace assoc bean main constructor");
+    }
+    hasMainConstructor = true;
+  }
+
+  /**
+   * Add fields and constructors to assoc type query beans as necessary.
+   */
+  public void addAssocBeanExtras(ClassVisitor cv) {
+
+    if (isLog(3)) {
+      String msg = "... add fields";
+      if (!hasBasicConstructor) {
+        msg += ", basic constructor";
+      }
+      if (!hasMainConstructor) {
+        msg += ", main constructor";
+      }
+      log(msg);
+    }
+
+    addAssocBeanFields(cv);
+
+    if (!hasBasicConstructor) {
+      // add the assoc bean basic constructor
+      new TypeQueryAssocBasicConstructor(this, cv, ASSOC_BEAN_BASIC_CONSTRUCTOR_DESC, ASSOC_BEAN_BASIC_SIG).visitCode();
+    }
+    if (!hasMainConstructor) {
+      // add the assoc bean main constructor
+      new TypeQueryAssocMainConstructor(this, cv, ASSOC_BEAN_MAIN_CONSTRUCTOR_DESC, ASSOC_BEAN_MAIN_SIG).visitCode();
+    }
+
+  }
+
+  private void addAssocBeanFields(ClassVisitor cw) {
+
+    FieldVisitor fv = cw.visitField(Opcodes.ACC_PRIVATE, "_path", "Ljava/lang/String;", null, null);
+    fv.visitEnd();
+
+    fv = cw.visitField(Opcodes.ACC_PRIVATE, "_root", "Ljava/lang/Object;", "TR;", null);
+    fv.visitEnd();
+  }
+
 }

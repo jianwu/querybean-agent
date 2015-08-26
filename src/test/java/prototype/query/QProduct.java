@@ -17,18 +17,9 @@ public class QProduct extends TQRootBean<Product,QProduct> {
   public PString<QProduct> sku;
   public PString<QProduct> name;
 
+  // minimal code gen
   public QProduct() {
-    this(3);
-  }
-  public QProduct(int maxDepth) {
     super(Product.class);
-    setRoot(this);
-    this.id = new PLong<QProduct>("id", this);
-    this.version = new PLong<QProduct>("version", this);
-    this.whenCreated = new PTimestamp<QProduct>("whenCreated", this);
-    this.whenUpdated = new PTimestamp<QProduct>("whenUpdated", this);
-    this.sku = new PString<QProduct>("sku", this);
-    this.name = new PString<QProduct>("name", this);
   }
 
 

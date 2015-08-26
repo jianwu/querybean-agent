@@ -19,14 +19,14 @@ public class QAssocOrderDetail<R> {
   public PDouble<R> unitPrice;
   public QAssocProduct<R> product;
 
-//  private String _path;
-//  private R _root;
-  public QAssocOrderDetail(String name, R root, int depth) {
-    this(name, root, null, depth);
-  }
-  public QAssocOrderDetail(String name, R root, String prefix, int depth) {
-//    _path = TQPath.add(prefix, name);
-//    _root = root;
+////  private String _path;
+////  private R _root;
+//  public QAssocOrderDetail(String name, R root, int depth) {
+//    this(name, root, null, depth);
+//  }
+//  public QAssocOrderDetail(String name, R root, String prefix, int depth) {
+//    String path = TQPath.add(prefix, name);
+//    //_root = root;
 //    this.id = new PLong<R>("id", root, path);
 //    this.version = new PLong<R>("version", root, path);
 //    this.whenCreated = new PTimestamp<R>("whenCreated", root, path);
@@ -35,9 +35,9 @@ public class QAssocOrderDetail<R> {
 //    this.shipQty = new PInteger<R>("shipQty", root, path);
 //    this.unitPrice = new PDouble<R>("unitPrice", root, path);
 //    if (--depth > 0) {
-//      this.product = new QAssocProduct<R>("product", root, path, depth);
+//      //this.product = new QAssocProduct<R>("product", root, path, depth);
 //    }
-  }
+//  }
 
 //  public PDouble<R> _unitPrice() {
 //    if (unitPrice == null) {

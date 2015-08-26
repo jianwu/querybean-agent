@@ -10,9 +10,7 @@ import org.avaje.ebean.typequery.agent.asm.Opcodes;
 /**
  * Reads/visits the class and performs the appropriate enhancement if necessary.
  */
-public class TypeQueryClassAdapter extends ClassVisitor {
-
-  private static final String TQ_ROOT_BEAN = "org/avaje/ebean/typequery/TQRootBean";
+public class TypeQueryClassAdapter extends ClassVisitor implements Constants {
 
   private final EnhanceContext enhanceContext;
 
@@ -25,7 +23,6 @@ public class TypeQueryClassAdapter extends ClassVisitor {
     super(Opcodes.ASM5, cw);
     this.enhanceContext = enhanceContext;
   }
-
 
   @Override
   public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
@@ -70,8 +67,6 @@ public class TypeQueryClassAdapter extends ClassVisitor {
     return super.visitField(access, name, desc, signature, value);
   }
 
-  private static final String ASSOC_BEAN_CONSTRUCTOR_DESC = "(Ljava/lang/String;Ljava/lang/Object;Ljava/lang/String;I)V";
-
   @Override
   public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
 
@@ -81,15 +76,7 @@ public class TypeQueryClassAdapter extends ClassVisitor {
       }
       if (name.equals("<init>")) {
         if (!typeQueryRootBean) {
-          if (desc.equals(ASSOC_BEAN_CONSTRUCTOR_DESC)) {
-            if (isLog(3)) {
-              log("replace assoc bean constructor code <init> "+desc);
-            }
-            return new TypeQueryAssocConstructor(classInfo, cv, desc, signature);
-          } else {
-            // leave this constructor as is
-            return super.visitMethod(access, name, desc, signature, exceptions);
-          }
+          return handleAssocBeanConstructor(access, name, desc, signature, exceptions);
         }
         if (isLog(3)) {
           log("replace constructor code <init> "+desc);
@@ -109,13 +96,31 @@ public class TypeQueryClassAdapter extends ClassVisitor {
     return new MethodAdapter(mv, enhanceContext, classInfo);
   }
 
+  /**
+   * Handle the constructors for assoc type query beans.
+   */
+  private MethodVisitor handleAssocBeanConstructor(int access, String name, String desc, String signature, String[] exceptions) {
+
+    if (desc.equals(ASSOC_BEAN_BASIC_CONSTRUCTOR_DESC)) {
+      classInfo.setHasBasicConstructor();
+      return new TypeQueryAssocBasicConstructor(classInfo, cv, desc, signature);
+    }
+    if (desc.equals(ASSOC_BEAN_MAIN_CONSTRUCTOR_DESC)) {
+      classInfo.setHasMainConstructor();
+      return new TypeQueryAssocMainConstructor(classInfo, cv, desc, signature);
+    }
+    // leave as is
+    return super.visitMethod(access, name, desc, signature, exceptions);
+  }
+
   @Override
   public void visitEnd() {
     if (classInfo.isTypeQueryBean()) {
       if (!typeQueryRootBean) {
-        TypeQueryAddFields.add(cv);
+        classInfo.addAssocBeanExtras(cv);
       }
       TypeQueryAddMethods.add(cv, classInfo, typeQueryRootBean);
+
     } else if (classInfo.isTypeQueryUser() && isLog(1)) {
       classInfo.log("enhanced - getfield calls replaced");
     }
@@ -130,7 +135,7 @@ public class TypeQueryClassAdapter extends ClassVisitor {
     if (isLog(4)) {
       log("... adding marker annotation");
     }
-    AnnotationVisitor av = cv.visitAnnotation(ClassInfo.ANNOTATION_ALREADY_ENHANCED_MARKER, true);
+    AnnotationVisitor av = cv.visitAnnotation(ANNOTATION_ALREADY_ENHANCED_MARKER, true);
     if (av != null) {
       av.visitEnd();
     }

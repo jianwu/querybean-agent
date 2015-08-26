@@ -8,7 +8,7 @@ import org.avaje.ebean.typequery.agent.asm.Opcodes;
 /**
  * Field information.
  */
-public class FieldInfo implements Opcodes {
+public class FieldInfo implements Opcodes, Constants {
 
   private final ClassInfo classInfo;
   private final String name;
@@ -32,10 +32,10 @@ public class FieldInfo implements Opcodes {
   public void writeMethod(ClassVisitor cw, boolean typeQueryRootBean) {
 
     // simple why to determine the property is an associated bean type
-    boolean assocBean = desc.contains("/QAssoc");
+    boolean assocProperty = desc.contains("/QAssoc");
 
-    if (classInfo.isLog(3)) {
-      classInfo.log(" ... add method _" + name + " assocBean:" + assocBean + " rootBean:" + typeQueryRootBean);
+    if (classInfo.isLog(4)) {
+      classInfo.log(" ... add method _" + name + " assocProperty:" + assocProperty + " rootBean:" + typeQueryRootBean);
     }
 
     MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "_"+name, "()"+desc, "()"+signature, null);
@@ -56,14 +56,14 @@ public class FieldInfo implements Opcodes {
     mv.visitLdcInsn(name);
     mv.visitVarInsn(ALOAD, 0);
 
-    if (assocBean) {
+    if (assocProperty) {
       if (typeQueryRootBean) {
         mv.visitInsn(ICONST_1);
         mv.visitMethodInsn(INVOKESPECIAL, desc, "<init>", "(Ljava/lang/String;Ljava/lang/Object;I)V", false);
       } else {
-        mv.visitFieldInsn(GETFIELD, classInfo.getClassName(), "_root", "Ljava/lang/Object;");
+        mv.visitFieldInsn(GETFIELD, classInfo.getClassName(), FIELD_ROOT, "Ljava/lang/Object;");
         mv.visitVarInsn(ALOAD, 0);
-        mv.visitFieldInsn(GETFIELD, classInfo.getClassName(), "_path", "Ljava/lang/String;");
+        mv.visitFieldInsn(GETFIELD, classInfo.getClassName(), FIELD_PATH, "Ljava/lang/String;");
         mv.visitInsn(ICONST_1);
         mv.visitMethodInsn(INVOKESPECIAL, desc, "<init>", "(Ljava/lang/String;Ljava/lang/Object;Ljava/lang/String;I)V", false);
       }
@@ -72,9 +72,9 @@ public class FieldInfo implements Opcodes {
       if (typeQueryRootBean) {
         mv.visitMethodInsn(INVOKESPECIAL, desc, "<init>", "(Ljava/lang/String;Ljava/lang/Object;)V", false);
       } else {
-        mv.visitFieldInsn(GETFIELD, classInfo.getClassName(), "_root", "Ljava/lang/Object;");
+        mv.visitFieldInsn(GETFIELD, classInfo.getClassName(), FIELD_ROOT, "Ljava/lang/Object;");
         mv.visitVarInsn(ALOAD, 0);
-        mv.visitFieldInsn(GETFIELD, classInfo.getClassName(), "_path", "Ljava/lang/String;");
+        mv.visitFieldInsn(GETFIELD, classInfo.getClassName(), FIELD_PATH, "Ljava/lang/String;");
         mv.visitMethodInsn(INVOKESPECIAL, desc, "<init>", "(Ljava/lang/String;Ljava/lang/Object;Ljava/lang/String;)V", false);
       }
     }
@@ -89,7 +89,7 @@ public class FieldInfo implements Opcodes {
     Label l3 = new Label();
     mv.visitLabel(l3);
     mv.visitLocalVariable("this", "L" + classInfo.getClassName() + ";", null, l0, l3, 0);
-    if (assocBean) {
+    if (assocProperty) {
       if (typeQueryRootBean) {
         mv.visitMaxs(6, 1);
       } else {

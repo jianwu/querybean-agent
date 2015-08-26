@@ -10,6 +10,15 @@ public class QAssocCountry<R> {
   public PString<R> code;
   public PString<R> name;
 
+//  public QAssocCountry(String name, R root) {
+//    this(name, root, null);
+//  }
+//  public QAssocCountry(String name, R root, String prefix) {
+//    String path = TQPath.add(prefix, name);
+//    this.code = new PString<R>("code", root, path);
+//    this.name = new PString<R>("name", root, path);
+//  }
+//
   public QAssocCountry(String name, R root, int depth) {
     this(name, root, null, depth);
   }
