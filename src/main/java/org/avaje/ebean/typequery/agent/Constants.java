@@ -14,7 +14,7 @@ public interface Constants {
 
   String TQ_ROOT_BEAN = "org/avaje/ebean/typequery/TQRootBean";
 
-  String TQPATH = "org/avaje/ebean/typequery/TQPath";
+  String TQ_PATH = "org/avaje/ebean/typequery/TQPath";
 
   String ASSOC_BEAN_BASIC_CONSTRUCTOR_DESC = "(Ljava/lang/String;Ljava/lang/Object;I)V";
 

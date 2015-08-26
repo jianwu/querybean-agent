@@ -45,7 +45,7 @@ public class TypeQueryAssocMainConstructor extends BaseConstructorAdapter implem
     mv.visitVarInsn(ALOAD, 0);
     mv.visitVarInsn(ALOAD, 3);
     mv.visitVarInsn(ALOAD, 1);
-    mv.visitMethodInsn(INVOKESTATIC, TQPATH, "add", "(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;", false);
+    mv.visitMethodInsn(INVOKESTATIC, TQ_PATH, "add", "(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;", false);
     mv.visitFieldInsn(PUTFIELD, classInfo.getClassName(), FIELD_PATH, "Ljava/lang/String;");
     Label l2 = new Label();
     mv.visitLabel(l2);
