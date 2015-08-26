@@ -9,7 +9,7 @@ import org.avaje.ebean.typequery.agent.asm.Type;
  * Changes the existing constructor to remove all the field initialisation as these are going to be
  * initialised lazily by calls to our generated methods.
  */
-public class TypeQueryConstructorAdapter extends BaseConstructorAdapter implements Opcodes {
+public class TypeQueryConstructorAdapter extends BaseConstructorAdapter implements Opcodes, Constants {
 
   private static final String TQROOT_BEAN = "org/avaje/ebean/typequery/TQRootBean";
 
@@ -38,6 +38,8 @@ public class TypeQueryConstructorAdapter extends BaseConstructorAdapter implemen
   @Override
   public void visitCode() {
 
+    boolean withEbeanServer = WITH_EBEANSERVER_ARGUMENT.equals(desc);
+
     mv = cv.visitMethod(ACC_PUBLIC, "<init>", desc, signature, null);
     mv.visitCode();
     Label l0 = new Label();
@@ -45,7 +47,13 @@ public class TypeQueryConstructorAdapter extends BaseConstructorAdapter implemen
     mv.visitLineNumber(1, l0);
     mv.visitVarInsn(ALOAD, 0);
     mv.visitLdcInsn(Type.getType("L" + domainClass + ";"));
-    mv.visitMethodInsn(INVOKESPECIAL, TQROOT_BEAN, "<init>", "(Ljava/lang/Class;)V", false);
+    if (withEbeanServer) {
+      mv.visitVarInsn(ALOAD, 1);
+      mv.visitMethodInsn(INVOKESPECIAL, TQROOT_BEAN, "<init>", "(Ljava/lang/Class;Lcom/avaje/ebean/EbeanServer;)V", false);
+    } else {
+      mv.visitMethodInsn(INVOKESPECIAL, TQROOT_BEAN, "<init>", "(Ljava/lang/Class;)V", false);
+    }
+
     Label l1 = new Label();
     mv.visitLabel(l1);
     mv.visitLineNumber(2, l1);
@@ -59,8 +67,12 @@ public class TypeQueryConstructorAdapter extends BaseConstructorAdapter implemen
     Label l3 = new Label();
     mv.visitLabel(l3);
     mv.visitLocalVariable("this", "L" + classInfo.getClassName() + ";", null, l0, l3, 0);
-    mv.visitLocalVariable("maxDepth", "I", null, l0, l3, 1);
-    mv.visitMaxs(2, 2);
+    if (withEbeanServer) {
+      mv.visitLocalVariable("server", "Lcom/avaje/ebean/EbeanServer;", null, l0, l3, 1);
+      mv.visitMaxs(3, 2);
+    } else {
+      mv.visitMaxs(2, 1);
+    }
     mv.visitEnd();
   }
 

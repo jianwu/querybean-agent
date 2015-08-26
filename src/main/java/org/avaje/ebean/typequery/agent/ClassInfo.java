@@ -122,7 +122,7 @@ public class ClassInfo implements Constants {
    */
   public void addGetFieldIntercept(String owner, String name) {
 
-    if (isLog(2)) {
+    if (isLog(4)) {
       log("change getfield " + owner + " name:" + name);
     }
     typeQueryUser = true;

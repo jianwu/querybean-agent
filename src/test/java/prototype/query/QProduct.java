@@ -1,5 +1,6 @@
 package prototype.query;
 
+import com.avaje.ebean.EbeanServer;
 import org.avaje.ebean.typequery.PLong;
 import org.avaje.ebean.typequery.PString;
 import org.avaje.ebean.typequery.PTimestamp;
@@ -20,7 +21,15 @@ public class QProduct extends TQRootBean<Product,QProduct> {
   // minimal code gen
   public QProduct() {
     super(Product.class);
+    setRoot(this);
   }
 
+  /**
+   * Construct with a given EbeanServer.
+   */
+  public QProduct(EbeanServer server) {
+    super(Product.class, server);
+    setRoot(this);
+  }
 
 }

@@ -42,7 +42,7 @@ public class TypeQueryClassAdapter extends ClassVisitor implements Constants {
    */
   protected String getDomainClass() {
     int posStart = signature.indexOf('<');
-    int posEnd = signature.indexOf(';', posStart+1);
+    int posEnd = signature.indexOf(';', posStart + 1);
     return signature.substring(posStart + 2, posEnd);
   }
 
@@ -79,7 +79,7 @@ public class TypeQueryClassAdapter extends ClassVisitor implements Constants {
           return handleAssocBeanConstructor(access, name, desc, signature, exceptions);
         }
         if (isLog(3)) {
-          log("replace constructor code <init> "+desc);
+          log("replace constructor code <init> " + desc);
         }
         return new TypeQueryConstructorAdapter(classInfo, getDomainClass(), cv, desc, signature);
       }
@@ -120,7 +120,9 @@ public class TypeQueryClassAdapter extends ClassVisitor implements Constants {
         classInfo.addAssocBeanExtras(cv);
       }
       TypeQueryAddMethods.add(cv, classInfo, typeQueryRootBean);
-
+      if (isLog(2)) {
+        classInfo.log("enhanced as type query bean");
+      }
     } else if (classInfo.isTypeQueryUser() && isLog(1)) {
       classInfo.log("enhanced - getfield calls replaced");
     }
