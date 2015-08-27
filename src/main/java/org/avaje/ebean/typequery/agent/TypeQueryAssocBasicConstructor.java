@@ -8,7 +8,8 @@ import org.avaje.ebean.typequery.agent.asm.Opcodes;
  * Changes the existing constructor to remove all the field initialisation as these are going to be
  * initialised lazily by calls to our generated methods.
  */
-public class TypeQueryAssocBasicConstructor extends BaseConstructorAdapter implements Opcodes {
+public class TypeQueryAssocBasicConstructor extends BaseConstructorAdapter implements Opcodes, Constants {
+
 
   private final ClassInfo classInfo;
 
@@ -36,16 +37,15 @@ public class TypeQueryAssocBasicConstructor extends BaseConstructorAdapter imple
     mv.visitCode();
     Label l0 = new Label();
     mv.visitLabel(l0);
-    mv.visitLineNumber(25, l0);
+    mv.visitLineNumber(1, l0);
     mv.visitVarInsn(ALOAD, 0);
     mv.visitVarInsn(ALOAD, 1);
     mv.visitVarInsn(ALOAD, 2);
     mv.visitInsn(ACONST_NULL);
-    mv.visitVarInsn(ILOAD, 3);
-    mv.visitMethodInsn(INVOKESPECIAL, classInfo.getClassName(), "<init>", "(Ljava/lang/String;Ljava/lang/Object;Ljava/lang/String;I)V", false);
+    mv.visitMethodInsn(INVOKESPECIAL, TQ_ASSOC_BEAN, "<init>", "(Ljava/lang/String;Ljava/lang/Object;Ljava/lang/String;)V", false);
     Label l1 = new Label();
     mv.visitLabel(l1);
-    mv.visitLineNumber(26, l1);
+    mv.visitLineNumber(2, l1);
     mv.visitInsn(RETURN);
     Label l2 = new Label();
     mv.visitLabel(l2);
@@ -53,7 +53,7 @@ public class TypeQueryAssocBasicConstructor extends BaseConstructorAdapter imple
     mv.visitLocalVariable("name", "Ljava/lang/String;", null, l0, l2, 1);
     mv.visitLocalVariable("root", "Ljava/lang/Object;", "TR;", l0, l2, 2);
     mv.visitLocalVariable("depth", "I", null, l0, l2, 3);
-    mv.visitMaxs(5, 4);
+    mv.visitMaxs(4, 4);
     mv.visitEnd();
   }
 

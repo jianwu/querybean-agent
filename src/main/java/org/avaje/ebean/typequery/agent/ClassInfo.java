@@ -172,8 +172,6 @@ public class ClassInfo implements Constants {
       log(msg);
     }
 
-    addAssocBeanFields(cv);
-
     if (!hasBasicConstructor) {
       // add the assoc bean basic constructor
       new TypeQueryAssocBasicConstructor(this, cv, ASSOC_BEAN_BASIC_CONSTRUCTOR_DESC, ASSOC_BEAN_BASIC_SIG).visitCode();
@@ -183,15 +181,6 @@ public class ClassInfo implements Constants {
       new TypeQueryAssocMainConstructor(this, cv, ASSOC_BEAN_MAIN_CONSTRUCTOR_DESC, ASSOC_BEAN_MAIN_SIG).visitCode();
     }
 
-  }
-
-  private void addAssocBeanFields(ClassVisitor cw) {
-
-    FieldVisitor fv = cw.visitField(Opcodes.ACC_PRIVATE, "_path", "Ljava/lang/String;", null, null);
-    fv.visitEnd();
-
-    fv = cw.visitField(Opcodes.ACC_PRIVATE, "_root", "Ljava/lang/Object;", "TR;", null);
-    fv.visitEnd();
   }
 
 }

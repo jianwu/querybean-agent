@@ -3,11 +3,12 @@ package prototype.query.assoc;
 import org.avaje.ebean.typequery.PLong;
 import org.avaje.ebean.typequery.PString;
 import org.avaje.ebean.typequery.PTimestamp;
-import org.avaje.ebean.typequery.TQPath;
+import org.avaje.ebean.typequery.TQAssocBean;
 import org.avaje.ebean.typequery.TypeQueryBean;
+import prototype.domain.Address;
 
 @TypeQueryBean
-public class QAssocAddress<R> {
+public class QAssocAddress<R> extends TQAssocBean<Address,R> {
 
   public PLong<R> id;
   public PLong<R> version;
@@ -17,6 +18,10 @@ public class QAssocAddress<R> {
   public PString<R> line2;
   public PString<R> city;
   public QAssocCountry<R> country;
+
+  public QAssocAddress(String name, R root) {
+    super(name, root);
+  }
 
 //  public QAssocAddress(String name, R root, int depth) {
 //    this(name, root, null, depth);

@@ -5,11 +5,13 @@ import org.avaje.ebean.typequery.PLong;
 import org.avaje.ebean.typequery.PMonth;
 import org.avaje.ebean.typequery.PString;
 import org.avaje.ebean.typequery.PTimestamp;
+import org.avaje.ebean.typequery.TQAssocBean;
 import org.avaje.ebean.typequery.TQPath;
 import org.avaje.ebean.typequery.TypeQueryBean;
+import prototype.domain.Product;
 
 @TypeQueryBean
-public class QAssocProduct<R> {
+public class QAssocProduct<R> extends TQAssocBean<Product,R> {
 
   public PLong<R> id;
   public PLong<R> version;
@@ -23,7 +25,9 @@ public class QAssocProduct<R> {
   public QAssocProduct(String name, R root, int depth) {
     this(name, root, null, depth);
   }
+
   public QAssocProduct(String name, R root, String prefix, int depth) {
+    super(name, root, prefix);
     String path = TQPath.add(prefix, name);
     this.id = new PLong<R>("id", root, path);
     this.version = new PLong<R>("version", root, path);

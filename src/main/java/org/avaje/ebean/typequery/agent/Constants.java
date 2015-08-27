@@ -15,6 +15,8 @@ public interface Constants {
    */
   String ANNOTATION_TYPE_QUERY_BEAN = "Lorg/avaje/ebean/typequery/TypeQueryBean;";
 
+  String TQ_ASSOC_BEAN = "org/avaje/ebean/typequery/TQAssocBean";
+
   /**
    * The TQRootBean object class name.
    */
@@ -34,12 +36,12 @@ public interface Constants {
   String ASSOC_BEAN_MAIN_SIG = "(Ljava/lang/String;TR;Ljava/lang/String;I)V";
 
   /**
-   * The path field added to assoc type query beans.
+   * The name field inherited that effectively holds the path for other properties to create from.
    */
-  String FIELD_PATH = "_path";
+  String FIELD_PATH = "_name";
 
   /**
-   * The root object field added to assoc type query beans.
+   * The root object field inherited.
    */
   String FIELD_ROOT = "_root";
 

@@ -4,11 +4,12 @@ import org.avaje.ebean.typequery.PDouble;
 import org.avaje.ebean.typequery.PInteger;
 import org.avaje.ebean.typequery.PLong;
 import org.avaje.ebean.typequery.PTimestamp;
-import org.avaje.ebean.typequery.TQPath;
+import org.avaje.ebean.typequery.TQAssocBean;
 import org.avaje.ebean.typequery.TypeQueryBean;
+import prototype.domain.OrderDetail;
 
 @TypeQueryBean
-public class QAssocOrderDetail<R> {
+public class QAssocOrderDetail<R> extends TQAssocBean<OrderDetail,R> {
 
   public PLong<R> id;
   public PLong<R> version;
@@ -18,6 +19,10 @@ public class QAssocOrderDetail<R> {
   public PInteger<R> shipQty;
   public PDouble<R> unitPrice;
   public QAssocProduct<R> product;
+
+  public QAssocOrderDetail(String name, R root) {
+    super(name, root);
+  }
 
 ////  private String _path;
 ////  private R _root;
@@ -46,10 +51,10 @@ public class QAssocOrderDetail<R> {
 //    return unitPrice;
 //  }
 //
-//  public QAssocProduct<R> _product() {
-//    if (product == null) {
-//      product = new QAssocProduct<R>("product", _root, _path, 1);
-//    }
-//    return product;
-//  }
+  public QAssocProduct<R> _otherProduct() {
+    if (product == null) {
+      product = new QAssocProduct<R>("product", _root, _name, 1);
+    }
+    return product;
+  }
 }
