@@ -156,7 +156,7 @@ public class EnhanceContext {
 		if (className != null) {
 			msg = "cls: " + className + "  msg: " + msg;
 		}
-		logout.println("transform> " + msg);
+		logout.println("typequery-enhance> " + msg);
 	}
 	
 	public boolean isLog(int level){

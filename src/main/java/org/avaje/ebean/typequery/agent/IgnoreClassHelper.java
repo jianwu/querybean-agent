@@ -22,6 +22,8 @@ public class IgnoreClassHelper {
 
   private static final Set<String> ignoreTwoLevel = new HashSet<String>();
 
+  private static final Set<String> ignoreThreeLevel = new HashSet<String>();
+
   static  {
     ignoreOneLevel.add("java");
     ignoreOneLevel.add("javax");
@@ -53,6 +55,11 @@ public class IgnoreClassHelper {
     ignoreTwoLevel.add("org/hamcrest");
     ignoreTwoLevel.add("org/mockito");
     ignoreTwoLevel.add("org/objenesis");
+    ignoreTwoLevel.add("com/intellij");
+
+    ignoreThreeLevel.add("com/avaje/ebeaninternal");
+    ignoreThreeLevel.add("com/avaje/ebean");
+    ignoreThreeLevel.add("org/avaje/ebean");
   }
 
   private final String[] processPackages;
@@ -122,11 +129,19 @@ public class IgnoreClassHelper {
     if (ignoreOneLevel.contains(firstPackage)) {
       return true;
     }
-    int secondSlash = className.indexOf('/', firstSlash+1);
+    int secondSlash = className.indexOf('/', firstSlash + 1);
     if (secondSlash == -1) {
       return false;
     }
     String secondPackage = className.substring(0, secondSlash);
-    return ignoreTwoLevel.contains(secondPackage);
+    if (ignoreTwoLevel.contains(secondPackage)) {
+      return true;
+    }
+    int thirdSlash = className.indexOf('/', secondSlash + 1);
+    if (thirdSlash == -1) {
+      return false;
+    }
+    String thirdPackage = className.substring(0, thirdSlash);
+    return ignoreThreeLevel.contains(thirdPackage);
   }
 }
