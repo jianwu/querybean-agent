@@ -18,8 +18,6 @@ public class OfflineFileTransform {
 
   private final String inDir;
 
-  private final String outDir;
-
 	private TransformationListener listener;
 
 	/**
@@ -33,15 +31,11 @@ public class OfflineFileTransform {
 	 *            the ClassLoader used as part of the transformation
 	 * @param inDir
 	 *            the root directory where the class files are located
-	 * 
-	 * @param outDir
-	 *            the root directory where the enhanced files are written to
 	 */
-	public OfflineFileTransform(Transformer transformer, ClassLoader classLoader, String inDir, String outDir) {
+	public OfflineFileTransform(Transformer transformer, ClassLoader classLoader, String inDir) {
 		this.inputStreamTransform = new InputStreamTransform(transformer, classLoader);
 		inDir = trimSlash(inDir);
 		this.inDir = inDir;
-		this.outDir = outDir == null ? inDir : outDir;
 	}
 
 	/** Register a listener to receive event notification */
@@ -113,7 +107,7 @@ public class OfflineFileTransform {
 				if (file.isDirectory()) {
 					if (recurse) {
 						String subdir = dir + "/" + file.getName();
-						processPackage(subdir, recurse);
+						processPackage(subdir, true);
 					}
 				} else {
 					String fileName = file.getName();
