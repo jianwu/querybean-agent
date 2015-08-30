@@ -16,10 +16,10 @@ public class AgentManifestReader {
 
   private final Set<String> packageSet = new HashSet<String>();
 
-  public static Set<String> read() {
+  public static Set<String> read(ClassLoader classLoader, Set<String> initialPackages) {
 
     try {
-      return new AgentManifestReader().readManifests();
+      return new AgentManifestReader(initialPackages).readManifests(classLoader);
     } catch (IOException e) {
       // log to standard error and return empty
       System.err.println("TypeQuery Agent: error reading META-INF/ebean-typequery.mf manifest resources");
@@ -28,12 +28,40 @@ public class AgentManifestReader {
     }
   }
 
+  /**
+   * Construct with some packages defined externally.
+   */
+  public AgentManifestReader(Set<String> initialPackages) {
+    if (initialPackages != null) {
+      packageSet.addAll(initialPackages);
+    }
+  }
+
+  /**
+   * Construct with no initial packages (to use with addRaw()).
+   */
+  public AgentManifestReader() {
+  }
+
+  /**
+   * Add raw packages: content (used for IDEA plugin etc).
+   */
+  public void addRaw(String content) {
+    add(content.replace("packages:","").trim());
+  }
+
+  /**
+   * Return the parsed set of packages that type query beans are in.
+   */
+  public Set<String> getPackages() {
+    return packageSet;
+  }
 
   /**
    * Read all the specific manifest files and return the set of packages containing type query beans.
    */
-  private Set<String> readManifests() throws IOException {
-    Enumeration<URL> resources = getClass().getClassLoader().getResources("META-INF/ebean-typequery.mf");
+  private Set<String> readManifests(ClassLoader classLoader) throws IOException {
+    Enumeration<URL> resources = classLoader.getResources("META-INF/ebean-typequery.mf");
     while (resources.hasMoreElements()) {
       try {
         Manifest manifest = new Manifest(resources.nextElement().openStream());

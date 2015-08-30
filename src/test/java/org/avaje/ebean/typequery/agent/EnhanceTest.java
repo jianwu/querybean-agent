@@ -24,7 +24,7 @@ public class EnhanceTest extends BaseTest {
 
     Class<?>[] cls= {};
     Method method = qAddress.getClass().getMethod("_version", cls);
-    Object result = method.invoke(qAddress, null);
+    Object result = method.invoke(qAddress, (Object[])null);
     assertNotNull(result);
 
     PLong<QAddress> version2 = qAddress.version;

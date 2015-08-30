@@ -12,7 +12,7 @@ public class EnhanceContextTest {
 
     String args = "packages=org.example,org.example.domain.query";
 
-    EnhanceContext context = new EnhanceContext(args);
+    EnhanceContext context = new EnhanceContext(args, EnhanceContextTest.class.getClassLoader(), null);
 
     assertTrue(context.isTypeQueryBean("org/example/domain/query/QProduct"));
     assertTrue(context.isTypeQueryBean("org/example/domain/query/assoc/QAssocProduct"));

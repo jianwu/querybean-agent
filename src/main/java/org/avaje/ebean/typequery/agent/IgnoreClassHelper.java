@@ -120,6 +120,7 @@ public class IgnoreClassHelper {
     if (className == null) {
       return true;
     }
+    className = className.replace('.', '/');
 
     if (processPackages.length > 0) {
       // use specific positive matching

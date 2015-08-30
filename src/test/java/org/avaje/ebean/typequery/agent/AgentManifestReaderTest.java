@@ -12,9 +12,33 @@ public class AgentManifestReaderTest {
   @Test
   public void testRead() throws Exception {
 
-    Set<String> packages = AgentManifestReader.read();
+    Set<String> packages = AgentManifestReader.read(AgentManifestReaderTest.class.getClassLoader(), null);
 
     assertThat(packages).contains("prototype.query","one.foo","two.bar","three.baz");
 
+  }
+
+  @Test
+  public void testAddRaw() {
+
+    AgentManifestReader manifestReader = new AgentManifestReader();
+    manifestReader.addRaw("packages: prototype.query one.foo");
+    Set<String> packages = manifestReader.getPackages();
+
+    assertThat(packages).contains("prototype.query","one.foo");
+
+  }
+
+  @Test
+  public void testCombine() {
+
+    AgentManifestReader manifestReader = new AgentManifestReader();
+    manifestReader.addRaw("packages: other.one");
+    Set<String> packages = manifestReader.getPackages();
+    assertThat(packages).contains("other.one");
+
+    Set<String> allPackages = AgentManifestReader.read(AgentManifestReaderTest.class.getClassLoader(), packages);
+
+    assertThat(allPackages).contains("prototype.query","one.foo","two.bar","three.baz","other.one");
   }
 }

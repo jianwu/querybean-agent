@@ -21,10 +21,10 @@ public class EnhanceContext {
 	/**
 	 * Construct a context for enhancement.
 	 */
-	public EnhanceContext(String agentArgs) {
+	public EnhanceContext(String agentArgs, ClassLoader classLoader, Set<String> initialPackages) {
 
     this.logout = System.out;
-    this.queryBeanPackages = convert(AgentManifestReader.read());
+    this.queryBeanPackages = convert(AgentManifestReader.read(classLoader, initialPackages));
     if (queryBeanPackages.length == 0) {
       System.err.println("---------------------------------------------------------------------------");
       System.err.println("TypeQuery Agent: No packages containing type query beans - this won't work.");
