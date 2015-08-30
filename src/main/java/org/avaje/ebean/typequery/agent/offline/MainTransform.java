@@ -34,7 +34,7 @@ public class MainTransform {
 
 		Transformer t = new Transformer(transformArgs, cl, null);
 
-		OfflineFileTransform ft = new OfflineFileTransform(t, cl, inDir, inDir);
+		OfflineFileTransform ft = new OfflineFileTransform(t, cl, inDir);
 
 		ft.process(pkg);
 
