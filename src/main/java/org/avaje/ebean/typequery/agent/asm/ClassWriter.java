@@ -1676,10 +1676,9 @@ public class ClassWriter extends ClassVisitor {
      */
     protected String getCommonSuperClass(final String type1, final String type2) {
         Class<?> c, d;
-        ClassLoader classLoader = getClass().getClassLoader();
         try {
-            c = Class.forName(type1.replace('/', '.'), false, classLoader);
-            d = Class.forName(type2.replace('/', '.'), false, classLoader);
+            c = classForName(type1.replace('/', '.'));
+            d = classForName(type2.replace('/', '.'));
         } catch (Exception e) {
             throw new RuntimeException(e.toString());
         }
@@ -1697,6 +1696,22 @@ public class ClassWriter extends ClassVisitor {
             } while (!c.isAssignableFrom(d));
             return c.getName().replace('.', '/');
         }
+    }
+
+    /**
+     * rbygrave: Extracted Class.forName() such that externally supplied classLoader may be used
+     * by overriding this method.
+     */
+    protected Class<?> classForName(String name) throws ClassNotFoundException {
+      try {
+        ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+        if (contextClassLoader != null) {
+          return Class.forName(name, false, contextClassLoader);
+        }
+      } catch (Throwable e) {
+        // ignore
+      }
+      return Class.forName(name, false, getClass().getClassLoader());
     }
 
     /**

@@ -1,5 +1,6 @@
 package org.avaje.ebean.typequery.agent;
 
+import org.avaje.ebean.typequery.agent.asm.CLAwareClassWriter;
 import org.avaje.ebean.typequery.agent.asm.ClassReader;
 import org.avaje.ebean.typequery.agent.asm.ClassWriter;
 
@@ -67,7 +68,6 @@ public class Transformer implements ClassFileTransformer {
       ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
 
     try {
-
       // ignore JDK and JDBC classes etc
       if (enhanceContext.isIgnoreClass(className)) {
         enhanceContext.log(8, "ignore class ", className);
@@ -75,7 +75,7 @@ public class Transformer implements ClassFileTransformer {
       }
 
       enhanceContext.log(8, "look at ", className);
-      return enhancement(classfileBuffer);
+      return enhancement(loader, classfileBuffer);
      
     } catch (NoEnhancementRequiredException e) {
       // the class is an interface
@@ -93,10 +93,10 @@ public class Transformer implements ClassFileTransformer {
   /**
    * Perform enhancement.
    */
-  private byte[] enhancement(byte[] classfileBuffer) {
+  private byte[] enhancement(ClassLoader classLoader, byte[] classfileBuffer) {
 
     ClassReader cr = new ClassReader(classfileBuffer);
-    ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES + ClassWriter.COMPUTE_MAXS);
+    CLAwareClassWriter cw = new CLAwareClassWriter(ClassWriter.COMPUTE_FRAMES + ClassWriter.COMPUTE_MAXS, classLoader);
     TypeQueryClassAdapter ca = new TypeQueryClassAdapter(cw, enhanceContext);
 
     try {
