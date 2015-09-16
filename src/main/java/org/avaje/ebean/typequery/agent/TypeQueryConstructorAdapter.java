@@ -11,8 +11,6 @@ import org.avaje.ebean.typequery.agent.asm.Type;
  */
 public class TypeQueryConstructorAdapter extends BaseConstructorAdapter implements Opcodes, Constants {
 
-  private static final String TQROOT_BEAN = "org/avaje/ebean/typequery/TQRootBean";
-
   private final ClassInfo classInfo;
 
   private final String domainClass;
@@ -49,9 +47,9 @@ public class TypeQueryConstructorAdapter extends BaseConstructorAdapter implemen
     mv.visitLdcInsn(Type.getType("L" + domainClass + ";"));
     if (withEbeanServer) {
       mv.visitVarInsn(ALOAD, 1);
-      mv.visitMethodInsn(INVOKESPECIAL, TQROOT_BEAN, "<init>", "(Ljava/lang/Class;Lcom/avaje/ebean/EbeanServer;)V", false);
+      mv.visitMethodInsn(INVOKESPECIAL, TQ_ROOT_BEAN, "<init>", "(Ljava/lang/Class;Lcom/avaje/ebean/EbeanServer;)V", false);
     } else {
-      mv.visitMethodInsn(INVOKESPECIAL, TQROOT_BEAN, "<init>", "(Ljava/lang/Class;)V", false);
+      mv.visitMethodInsn(INVOKESPECIAL, TQ_ROOT_BEAN, "<init>", "(Ljava/lang/Class;)V", false);
     }
 
     Label l1 = new Label();
