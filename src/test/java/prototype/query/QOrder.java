@@ -42,4 +42,21 @@ public class QOrder extends TQRootBean<Order,QOrder> {
 //    this.shippingAddress = new QAssocAddress<>("shippingAddress", this, maxDepth);
 //    this.details = new QAssocOrderDetail<>("details", this, maxDepth);
   }
+
+  /**
+   * Construct for alias.
+   */
+  private QOrder(boolean alias) {
+    super(alias);
+    setRoot(this);
+    this.id = new PLong<QOrder>("id", this);
+    this.version = new PLong<QOrder>("version", this);
+    this.whenCreated = new PTimestamp<QOrder>("whenCreated", this);
+    this.whenUpdated = new PTimestamp<QOrder>("whenUpdated", this);
+    this.status = new PEnum<QOrder,Order.Status>("status", this);
+    this.orderDate = new PSqlDate<QOrder>("orderDate", this);
+    this.shipDate = new PSqlDate<QOrder>("shipDate", this);
+    this.shippingAddress = new QAssocAddress<QOrder>("shippingAddress", this);
+    this.details = new QAssocOrderDetail<QOrder>("details", this);
+  }
 }

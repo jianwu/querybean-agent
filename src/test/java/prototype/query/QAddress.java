@@ -50,4 +50,10 @@ public class QAddress extends TQRootBean<Address,QAddress> {
 //    return country;
 //  }
 
+  /**
+   * Construct for alias.
+   */
+  private QAddress(boolean alias) {
+    super(alias);
+  }
 }

@@ -32,4 +32,16 @@ public class QProduct extends TQRootBean<Product,QProduct> {
     setRoot(this);
   }
 
+  /**
+   * Construct for alias.
+   */
+  private QProduct(boolean alias) {
+    super(alias);
+  }
+
+  private static final QProduct _alias = new QProduct(true);
+
+  public static QProduct alias() {
+    return _alias;
+  }
 }

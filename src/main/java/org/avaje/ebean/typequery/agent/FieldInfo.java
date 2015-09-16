@@ -104,4 +104,20 @@ public class FieldInfo implements Opcodes, Constants {
     }
     mv.visitEnd();
   }
+
+  /**
+   * Initialise the field (used by 'Alias' constructor).
+   */
+  public void writeFieldInit(MethodVisitor mv) {
+    Label l10 = new Label();
+    mv.visitLabel(l10);
+    mv.visitLineNumber(3, l10);
+    mv.visitVarInsn(ALOAD, 0);
+    mv.visitTypeInsn(NEW, desc);
+    mv.visitInsn(DUP);
+    mv.visitLdcInsn(name);
+    mv.visitVarInsn(ALOAD, 0);
+    mv.visitMethodInsn(INVOKESPECIAL, desc, "<init>", "(Ljava/lang/String;Ljava/lang/Object;)V", false);
+    mv.visitFieldInsn(PUTFIELD, classInfo.getClassName(), name, desc);
+  }
 }

@@ -96,6 +96,10 @@ public class TypeQueryClassAdapter extends ClassVisitor implements Constants {
         if (isLog(3)) {
           log("replace constructor code <init> " + desc);
         }
+        if (desc.equals("(Z)V")) {
+          // Constructor for alias initialises all the properties/fields
+          return new TypeQueryConstructorForAlias(classInfo, cv);
+        }
         return new TypeQueryConstructorAdapter(classInfo, getDomainClass(), cv, desc, signature);
       }
       if (isLog(5)) {
