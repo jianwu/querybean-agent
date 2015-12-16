@@ -14,7 +14,7 @@ import java.util.jar.Manifest;
  */
 public class AgentManifestReader {
 
-  private final Set<String> packageSet = new HashSet<String>();
+  private final Set<String> packageSet = new HashSet<>();
 
   public static Set<String> read(ClassLoader classLoader, Set<String> initialPackages) {
 
@@ -22,9 +22,9 @@ public class AgentManifestReader {
       return new AgentManifestReader(initialPackages).readManifests(classLoader);
     } catch (IOException e) {
       // log to standard error and return empty
-      System.err.println("TypeQuery Agent: error reading META-INF/ebean-typequery.mf manifest resources");
+      System.err.println("QueryBean Agent: error reading META-INF/ebean-typequery.mf manifest resources");
       e.printStackTrace();
-      return new HashSet<String>();
+      return new HashSet<>();
     }
   }
 

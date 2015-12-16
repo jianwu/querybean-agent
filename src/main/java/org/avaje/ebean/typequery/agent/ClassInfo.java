@@ -16,7 +16,7 @@ public class ClassInfo implements Constants {
   /**
    * Detect entity beans as we will ignore them for this enhancement.
    */
-  static Set<String> entityBeanAnnotations = new HashSet<String>();
+  static Set<String> entityBeanAnnotations = new HashSet<>();
   static {
     entityBeanAnnotations.add(ENTITY_ANNOTATION);
     entityBeanAnnotations.add(EMBEDDABLE_ANNOTATION);
@@ -104,7 +104,7 @@ public class ClassInfo implements Constants {
 
     if (((access & Opcodes.ACC_PUBLIC) != 0)) {
       if (fields == null) {
-        fields = new ArrayList<FieldInfo>();
+        fields = new ArrayList<>();
       }
       fields.add(new FieldInfo(this, name, desc, signature));
     }

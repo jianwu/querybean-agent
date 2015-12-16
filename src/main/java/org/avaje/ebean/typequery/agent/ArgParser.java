@@ -12,7 +12,7 @@ public class ArgParser {
 	 */
 	public static HashMap<String,String> parse(String args){
 		
-		HashMap<String,String> map = new HashMap<String,String>();
+		HashMap<String,String> map = new HashMap<>();
 		
 		if (args != null){
 			String[] split = args.split(";");

@@ -3,8 +3,8 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.avaje.ebeanorm</groupId>
-  <artifactId>avaje-ebeanorm-typequery-agent</artifactId>
-  <version>1.5.2-SNAPSHOT</version>
+  <artifactId>querybean-agent</artifactId>
+  <version>2.1.1-SNAPSHOT</version>
 
   <parent>
     <groupId>org.avaje</groupId>
@@ -13,9 +13,9 @@
   </parent>
 
   <scm>
-    <connection>scm:git:https://github.com/ebean-orm/avaje-ebeanorm-typequery-agent.git</connection>
-    <developerConnection>scm:git:https://github.com/ebean-orm/avaje-ebeanorm-typequery-agent.git</developerConnection>
-    <url>https://github.com/ebean-orm/avaje-ebeanorm-typequery-agent.git</url>
+    <connection>scm:git:https://github.com/ebean-orm/querybean-agent.git</connection>
+    <developerConnection>scm:git:https://github.com/ebean-orm/querybean-agent.git</developerConnection>
+    <url>https://github.com/ebean-orm/querybean-agent.git</url>
     <tag>HEAD</tag>
   </scm>
 
@@ -23,15 +23,15 @@
 
     <dependency>
       <groupId>org.avaje.ebeanorm</groupId>
-      <artifactId>avaje-ebeanorm-typequery</artifactId>
-      <version>1.4.1</version>
+      <artifactId>avaje-ebeanorm-querybean</artifactId>
+      <version>2.1.1</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>org.avaje.ebeanorm</groupId>
       <artifactId>avaje-ebeanorm</artifactId>
-      <version>6.7.1</version>
+      <version>6.13.1</version>
       <scope>test</scope>
     </dependency>
 
@@ -53,8 +53,8 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.1</version>
         <configuration>
-          <source>1.6</source>
-          <target>1.6</target>
+          <source>1.7</source>
+          <target>1.7</target>
         </configuration>
       </plugin>
 

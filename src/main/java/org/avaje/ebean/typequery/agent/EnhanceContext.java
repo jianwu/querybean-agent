@@ -27,7 +27,7 @@ public class EnhanceContext {
     this.queryBeanPackages = convert(AgentManifestReader.read(classLoader, initialPackages));
     if (queryBeanPackages.length == 0) {
       System.err.println("---------------------------------------------------------------------------");
-      System.err.println("TypeQuery Agent: No packages containing type query beans - this won't work.");
+      System.err.println("QueryBean Agent: No packages containing query beans - this won't work.");
       System.err.println("---------------------------------------------------------------------------");
     }
 
@@ -46,12 +46,12 @@ public class EnhanceContext {
       try {
         logLevel = Integer.parseInt(debugValue.trim());
       } catch (NumberFormatException e) {
-        System.err.println("TypeQuery Agent: debug argument [" + debugValue + "] is not an int? ignoring.");
+        System.err.println("QueryBean Agent: debug argument [" + debugValue + "] is not an int? ignoring.");
       }
     }
     if (logLevel > 1) {
-      log(1, "TypeQuery Agent: queryBeanPackages", Arrays.toString(queryBeanPackages));
-      log(1, "TypeQuery Agent: packages", Arrays.toString(packages));
+      log(1, "QueryBean Agent: queryBeanPackages", Arrays.toString(queryBeanPackages));
+      log(1, "QueryBean Agent: packages", Arrays.toString(packages));
     }
   }
 
@@ -156,7 +156,7 @@ public class EnhanceContext {
 		if (className != null) {
 			msg = "cls: " + className + "  msg: " + msg;
 		}
-		logout.println("typequery-enhance> " + msg);
+		logout.println("querybean-enhance> " + msg);
 	}
 	
 	public boolean isLog(int level){
