@@ -1,7 +1,7 @@
 package org.avaje.ebean.typequery.agent.offline;
 
 
-import org.avaje.ebean.typequery.agent.Transformer;
+import org.avaje.ebean.typequery.agent.QueryBeanTransformer;
 
 /**
  * A utility object to run transformation from a main method.
@@ -32,7 +32,7 @@ public class MainTransform {
 
 		ClassLoader cl = ClassLoader.getSystemClassLoader();
 
-		Transformer t = new Transformer(transformArgs, cl, null);
+		QueryBeanTransformer t = new QueryBeanTransformer(transformArgs, cl, null);
 
 		OfflineFileTransform ft = new OfflineFileTransform(t, cl, inDir);
 

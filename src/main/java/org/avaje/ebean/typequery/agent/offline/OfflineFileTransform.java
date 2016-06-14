@@ -1,6 +1,6 @@
 package org.avaje.ebean.typequery.agent.offline;
 
-import org.avaje.ebean.typequery.agent.Transformer;
+import org.avaje.ebean.typequery.agent.QueryBeanTransformer;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,7 +32,7 @@ public class OfflineFileTransform {
 	 * @param inDir
 	 *            the root directory where the class files are located
 	 */
-	public OfflineFileTransform(Transformer transformer, ClassLoader classLoader, String inDir) {
+	public OfflineFileTransform(QueryBeanTransformer transformer, ClassLoader classLoader, String inDir) {
 		this.inputStreamTransform = new InputStreamTransform(transformer, classLoader);
 		inDir = trimSlash(inDir);
 		this.inDir = inDir;

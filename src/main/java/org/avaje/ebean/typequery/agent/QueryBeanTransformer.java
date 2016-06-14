@@ -17,11 +17,11 @@ import java.util.Set;
  * This is used as both a javaagent or via an ANT task (or other off line approach).
  * </p>
  */
-public class Transformer implements ClassFileTransformer {
+public class QueryBeanTransformer implements ClassFileTransformer {
 
   public static void premain(String agentArgs, Instrumentation inst) {
 
-    Transformer t = new Transformer(agentArgs, null, null);
+    QueryBeanTransformer t = new QueryBeanTransformer(agentArgs, null, null);
     inst.addTransformer(t);
     if (t.getLogLevel() > 0) {
       System.out.println("premain loading Transformer with args:" + agentArgs);
@@ -30,7 +30,7 @@ public class Transformer implements ClassFileTransformer {
 
   public static void agentmain(String agentArgs, Instrumentation inst) throws Exception {
 
-    Transformer t = new Transformer(agentArgs, null, null);
+    QueryBeanTransformer t = new QueryBeanTransformer(agentArgs, null, null);
     inst.addTransformer(t);
     if (t.getLogLevel() > 0) {
       System.out.println("agentmain loading Transformer with args:" + agentArgs);
@@ -42,7 +42,7 @@ public class Transformer implements ClassFileTransformer {
   /**
    * Construct using the default classBytesReader implementation.
    */
-  public Transformer(String agentArgs, ClassLoader classLoader, Set<String> initialPackages) {
+  public QueryBeanTransformer(String agentArgs, ClassLoader classLoader, Set<String> initialPackages) {
     if (classLoader == null) {
       classLoader = getClass().getClassLoader();
     }
