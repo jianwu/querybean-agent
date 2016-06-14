@@ -22,7 +22,7 @@ public class MethodAdapter extends MethodVisitor implements Opcodes {
   @Override
   public void visitFieldInsn(int opcode, String owner, String name, String desc) {
 
-    if (opcode == GETFIELD && enhanceContext.isTypeQueryBean(owner)) {
+    if (opcode == GETFIELD && enhanceContext.isQueryBean(owner)) {
       classInfo.addGetFieldIntercept(owner, name);
       mv.visitMethodInsn(INVOKEVIRTUAL, owner, "_" + name, "()" + desc, false);
     } else {

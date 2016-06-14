@@ -14,9 +14,9 @@ public class EnhanceContextTest {
 
     EnhanceContext context = new EnhanceContext(args, EnhanceContextTest.class.getClassLoader(), null);
 
-    assertTrue(context.isTypeQueryBean("org/example/domain/query/QProduct"));
-    assertTrue(context.isTypeQueryBean("org/example/domain/query/assoc/QAssocProduct"));
-    assertFalse(context.isTypeQueryBean("org/example/domain/foo/QAssocProduct"));
+    assertTrue(context.isQueryBean("org/example/domain/query/QProduct"));
+    assertTrue(context.isQueryBean("org/example/domain/query/assoc/QAssocProduct"));
+    assertFalse(context.isQueryBean("org/example/domain/foo/QAssocProduct"));
 
     assertFalse(context.isIgnoreClass("org/example/domain/query/QProduct"));
     assertFalse(context.isIgnoreClass("org/example/domain/query/assoc/QAssocProduct"));

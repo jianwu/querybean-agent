@@ -63,7 +63,7 @@ public class EnhanceContext {
    * 'property access' methods.
    * </p>
    */
-  public boolean isTypeQueryBean(String owner) {
+  public boolean isQueryBean(String owner) {
 		return detectQueryBean.isQueryBean(owner);
   }
 
