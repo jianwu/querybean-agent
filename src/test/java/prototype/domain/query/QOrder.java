@@ -1,4 +1,4 @@
-package prototype.query;
+package prototype.domain.query;
 
 import org.avaje.ebean.typequery.PEnum;
 import org.avaje.ebean.typequery.PLong;
@@ -7,8 +7,8 @@ import org.avaje.ebean.typequery.PTimestamp;
 import org.avaje.ebean.typequery.TQRootBean;
 import org.avaje.ebean.typequery.TypeQueryBean;
 import prototype.domain.Order;
-import prototype.query.assoc.QAssocAddress;
-import prototype.query.assoc.QAssocOrderDetail;
+import prototype.domain.query.assoc.QAssocAddress;
+import prototype.domain.query.assoc.QAssocOrderDetail;
 
 
 @TypeQueryBean

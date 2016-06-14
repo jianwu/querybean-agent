@@ -1,4 +1,4 @@
-package prototype.query;
+package prototype.domain.query;
 
 import com.avaje.ebean.EbeanServer;
 import org.avaje.ebean.typequery.PLong;

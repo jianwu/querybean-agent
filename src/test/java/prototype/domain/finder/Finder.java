@@ -1,4 +1,7 @@
-package prototype.query;
+package prototype.domain.finder;
+
+import prototype.domain.query.QAddress;
+import prototype.domain.query.QOrder;
 
 public class Finder {
 

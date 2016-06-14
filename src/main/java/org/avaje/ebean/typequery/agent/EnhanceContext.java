@@ -12,7 +12,7 @@ public class EnhanceContext {
 
 	private final IgnoreClassHelper ignoreClassHelper;
 
-  private final String[] queryBeanPackages;
+	private final DetectQueryBean detectQueryBean;
 
 	private PrintStream logout;
 
@@ -24,17 +24,18 @@ public class EnhanceContext {
 	public EnhanceContext(String agentArgs, ClassLoader classLoader, Set<String> initialPackages) {
 
     this.logout = System.out;
-    this.queryBeanPackages = convert(AgentManifestReader.read(classLoader, initialPackages));
-    if (queryBeanPackages.length == 0) {
-      System.err.println("---------------------------------------------------------------------------");
-      System.err.println("QueryBean Agent: No packages containing query beans - this won't work.");
-      System.err.println("---------------------------------------------------------------------------");
+
+    this.detectQueryBean = Distill.convert(AgentManifestReader.read(classLoader, initialPackages));
+    if (detectQueryBean.isEmpty()) {
+      System.err.println("---------------------------------------------------------------------------------------------");
+      System.err.println("QueryBean Agent: No packages containing query beans - Missing ebean.mf files? this won't work.");
+      System.err.println("---------------------------------------------------------------------------------------------");
     }
 
     HashMap<String, String> agentArgsMap = ArgParser.parse(agentArgs);
-    String[] packages = parsePackages(agentArgsMap.get("packages"));
+    String[] packages = Distill.parsePackages(agentArgsMap.get("packages"));
     if (packages.length > 0) {
-      String[] all = mergePackages(queryBeanPackages, packages);
+      String[] all = Distill.mergePackages(detectQueryBean.getPackages(), packages);
       this.ignoreClassHelper = new IgnoreClassHelper(all);
     } else {
       // no explicit packages (so use built in ignores)
@@ -50,65 +51,8 @@ public class EnhanceContext {
       }
     }
     if (logLevel > 1) {
-      log(1, "QueryBean Agent: queryBeanPackages", Arrays.toString(queryBeanPackages));
-      log(1, "QueryBean Agent: packages", Arrays.toString(packages));
-    }
-  }
-
-  /**
-   * Merge the packages to include in the enhancement (all other packages will now be ignored).
-   */
-  private String[] mergePackages(String[] packages1, String[] packages2) {
-
-    String[] all = new String[packages1.length + packages2.length];
-    System.arraycopy(packages1, 0, all, 0, packages1.length);
-    System.arraycopy(packages2, 0, all, packages1.length, packages2.length);
-    return all;
-  }
-
-  /**
-   * Split using delimiter and convert to slash notation.
-   */
-  private String[] parsePackages(String packages) {
-    if (packages == null || packages.trim().length() == 0) {
-      return new String[0];
-    }
-    String[] commaSplit = packages.split(",");
-    String[] processPackages = new String[commaSplit.length];
-    for (int i = 0; i < commaSplit.length; i++) {
-      processPackages[i] = convertPackage(commaSplit[i]);
-    }
-    return processPackages;
-  }
-
-  /**
-   * Convert to an array with slash notation.
-   */
-  private String[] convert(Set<String> pkg) {
-    String[] asArray = pkg.toArray(new String[pkg.size()]);
-    for (int i = 0; i < asArray.length; i++) {
-      asArray[i] = convertPackage(asArray[i]);
-    }
-    return asArray;
-  }
-
-  /**
-   * Concert to slash notation taking into account trailing wildcard.
-   */
-  private String convertPackage(String pkg) {
-
-    pkg = pkg.replace('.','/');
-    if (pkg.endsWith("*")) {
-      // wild card, remove the * ... and don't add a "." to the end
-      return pkg.substring(0, pkg.length() - 1);
-
-    } else if (pkg.endsWith("/")) {
-      return pkg;
-
-    } else {
-      // add "/" so we don't pick up another
-      // package with a similar starting name
-      return pkg + "/";
+      log(1, "QueryBean Agent: entity bean packages", detectQueryBean.toString());
+      log(1, "QueryBean Agent: application packages", Arrays.toString(packages));
     }
   }
 
@@ -120,12 +64,7 @@ public class EnhanceContext {
    * </p>
    */
   public boolean isTypeQueryBean(String owner) {
-    for (int i = 0; i < queryBeanPackages.length; i++) {
-      if (owner.startsWith(queryBeanPackages[i])) {
-        return true;
-      }
-    }
-    return false;
+		return detectQueryBean.isQueryBean(owner);
   }
 
 	/**

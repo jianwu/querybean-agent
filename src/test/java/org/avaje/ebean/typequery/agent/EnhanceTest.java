@@ -3,7 +3,7 @@ package org.avaje.ebean.typequery.agent;
 
 import org.avaje.ebean.typequery.PLong;
 import org.junit.Test;
-import prototype.query.QAddress;
+import prototype.domain.query.QAddress;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

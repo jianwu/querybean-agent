@@ -1,7 +1,10 @@
-package prototype.query;
+package prototype.domain.finder;
 
 import org.avaje.ebean.typequery.agent.BaseTest;
 import org.junit.Test;
+import prototype.domain.query.QAddress;
+import prototype.domain.query.QOrder;
+import prototype.domain.query.QProduct;
 
 import java.lang.reflect.Field;
 

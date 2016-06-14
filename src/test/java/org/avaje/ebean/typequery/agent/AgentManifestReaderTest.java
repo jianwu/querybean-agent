@@ -14,19 +14,17 @@ public class AgentManifestReaderTest {
 
     Set<String> packages = AgentManifestReader.read(AgentManifestReaderTest.class.getClassLoader(), null);
 
-    assertThat(packages).contains("prototype.query","one.foo","two.bar","three.baz");
-
+    assertThat(packages).contains("prototype.domain","one.foo","two.bar","three.baz");
   }
 
   @Test
   public void testAddRaw() {
 
     AgentManifestReader manifestReader = new AgentManifestReader();
-    manifestReader.addRaw("packages: prototype.query one.foo");
+    manifestReader.addRaw("packages: prototype.domain one.foo");
     Set<String> packages = manifestReader.getPackages();
 
-    assertThat(packages).contains("prototype.query","one.foo");
-
+    assertThat(packages).contains("prototype.domain","one.foo");
   }
 
   @Test
@@ -39,6 +37,6 @@ public class AgentManifestReaderTest {
 
     Set<String> allPackages = AgentManifestReader.read(AgentManifestReaderTest.class.getClassLoader(), packages);
 
-    assertThat(allPackages).contains("prototype.query","one.foo","two.bar","three.baz","other.one");
+    assertThat(allPackages).contains("prototype.domain","one.foo","two.bar","three.baz","other.one");
   }
 }

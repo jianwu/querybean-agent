@@ -1,4 +1,4 @@
-package prototype.query;
+package prototype.domain.query;
 
 import org.avaje.ebean.typequery.PLong;
 import org.avaje.ebean.typequery.PString;
@@ -6,7 +6,7 @@ import org.avaje.ebean.typequery.PTimestamp;
 import org.avaje.ebean.typequery.TQRootBean;
 import org.avaje.ebean.typequery.TypeQueryBean;
 import prototype.domain.Address;
-import prototype.query.assoc.QAssocCountry;
+import prototype.domain.query.assoc.QAssocCountry;
 
 @TypeQueryBean
 public class QAddress extends TQRootBean<Address,QAddress> {

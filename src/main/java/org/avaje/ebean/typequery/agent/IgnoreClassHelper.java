@@ -5,7 +5,7 @@ import java.util.Set;
 
 /**
  * Helper object used to ignore known classes. We only want to enhance the
- * entity beans and perhaps some other user classes (not JDK classes etc).
+ * query beans and code using query beans.
  * <p>
  * In looking for classes to enhance we can skip some such as JDK, JDBC and
  * other known libraries.
@@ -65,6 +65,7 @@ public class IgnoreClassHelper {
     ignoreTwoLevel.add("org/objenesis");
     ignoreTwoLevel.add("org/objectweb");
     ignoreTwoLevel.add("org/jboss");
+    ignoreTwoLevel.add("org/testng");
     ignoreTwoLevel.add("com/intellij");
     ignoreTwoLevel.add("com/google");
     ignoreTwoLevel.add("com/squareup");

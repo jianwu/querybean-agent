@@ -1,4 +1,4 @@
-package prototype.query.assoc;
+package prototype.domain.query.assoc;
 
 import org.avaje.ebean.typequery.PLong;
 import org.avaje.ebean.typequery.PString;
