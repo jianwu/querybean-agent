@@ -2,9 +2,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.avaje.ebeanorm</groupId>
+  <groupId>org.avaje.ebean</groupId>
   <artifactId>querybean-agent</artifactId>
-  <version>2.3.2-SNAPSHOT</version>
+  <version>8.1.1-SNAPSHOT</version>
 
   <parent>
     <groupId>org.avaje</groupId>
@@ -22,16 +22,16 @@
   <dependencies>
 
     <dependency>
-      <groupId>org.avaje.ebeanorm</groupId>
-      <artifactId>avaje-ebeanorm-querybean</artifactId>
-      <version>2.1.1</version>
+      <groupId>org.avaje.ebean</groupId>
+      <artifactId>ebean-querybean</artifactId>
+      <version>8.1.1</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
-      <groupId>org.avaje.ebeanorm</groupId>
-      <artifactId>avaje-ebeanorm</artifactId>
-      <version>6.13.1</version>
+      <groupId>org.avaje.ebean</groupId>
+      <artifactId>ebean</artifactId>
+      <version>8.1.1</version>
       <scope>test</scope>
     </dependency>
 
@@ -73,9 +73,9 @@
       </plugin>
 
       <plugin>
-        <groupId>org.avaje.ebeanorm</groupId>
-        <artifactId>avaje-ebeanorm-mavenenhancer</artifactId>
-        <version>4.11.1</version>
+        <groupId>org.avaje.ebean</groupId>
+        <artifactId>ebean-maven-plugin</artifactId>
+        <version>8.1.1</version>
         <executions>
           <!--   Not going to enhance Model bean -->
           <execution>
