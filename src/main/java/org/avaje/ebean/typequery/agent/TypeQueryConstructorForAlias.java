@@ -48,8 +48,10 @@ public class TypeQueryConstructorForAlias extends BaseConstructorAdapter impleme
 
     // init all the properties
     List<FieldInfo> fields = classInfo.getFields();
-    for (FieldInfo field : fields) {
-      field.writeFieldInit(mv);
+    if (fields != null) {
+      for (FieldInfo field : fields) {
+        field.writeFieldInit(mv);
+      }
     }
 
     Label l2 = new Label();
