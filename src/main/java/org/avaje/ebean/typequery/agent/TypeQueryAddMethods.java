@@ -17,8 +17,10 @@ public class TypeQueryAddMethods implements Opcodes {
 
     List<FieldInfo> fields = classInfo.getFields();
 
-    for (FieldInfo field : fields) {
-      field.writeMethod(cw, typeQueryRootBean);
+    if (fields != null) {
+      for (FieldInfo field : fields) {
+        field.writeMethod(cw, typeQueryRootBean);
+      }
     }
   }
 
