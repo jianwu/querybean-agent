@@ -12,7 +12,7 @@ public class EnhanceContext {
 
 	private final IgnoreClassHelper ignoreClassHelper;
 
-	private final DetectQueryBean detectQueryBean;
+	private DetectQueryBean detectQueryBean;
 
 	private PrintStream logout;
 
@@ -28,11 +28,15 @@ public class EnhanceContext {
     this.detectQueryBean = Distill.convert(AgentManifestReader.read(classLoader, initialPackages));
     if (detectQueryBean.isEmpty()) {
       System.err.println("---------------------------------------------------------------------------------------------");
-      System.err.println("QueryBean Agent: No packages containing query beans - Missing ebean.mf files? this won't work.");
+      System.err.println("QueryBean Agent: No packages containing query beans - Missing ebean.mf files or is not loadable due to classloader issue");
+      System.err.println("QueryBean Agent: Will try type_query_packages agentArgs.");
       System.err.println("---------------------------------------------------------------------------------------------");
     }
 
     HashMap<String, String> agentArgsMap = ArgParser.parse(agentArgs);
+    String[] typeQueryPackages = Distill.parsePackages(agentArgsMap.get("type_query_packages"));
+    if (typeQueryPackages.length > 0)
+      detectQueryBean = new DetectQueryBean(typeQueryPackages);
     String[] packages = Distill.parsePackages(agentArgsMap.get("packages"));
     if (packages.length > 0) {
       String[] all = Distill.mergePackages(detectQueryBean.getPackages(), packages);
